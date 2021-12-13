@@ -1,11 +1,12 @@
 # AndroidAdManager
 
 - Works with Admob, Mopup, Facebook- Bidding and Audience Networks.
-- Added ad types are NativeBanner, NativeAdvanced, Interstitial and Banner ads for
+- Added ad types are NativeBanner, NativeAdvanced, Interstitial and Banner Ads for
   Facebook, Admob and MopUp.
-- By Default some fallback strategies are added for all ads in case any fails other takes its place.
+- By Default some fallback strategies are added for all Ads in case any fails other takes its place.
 - Ui Always stays stable, no displacement.
-- Shimmer animations while ads is loaded.
+- Shimmer animations while Ads is loaded.
+- Banner size is calculated automatically according to varying screen sizes.
 
 To get a Git project into your build:
 
@@ -60,7 +61,7 @@ Step 4. Add the relevant strings in strings file
 
 Step 5. Initialize the AndroidAdManager in Application class. by passing the Required
 
-ids in the constructor.
+ids and context in the Admanager's constructor.
 
      val hIdsMap = hashMapOf<AdsType, HashMap<WhatAd, String>>()
      val hAdMobMap = hashMapOf<WhatAd, String>()
@@ -87,6 +88,11 @@ ids in the constructor.
      hIdsMap[AdsType.H_FACEBOOK] = hFacebookMap
      hIdsMap[AdsType.H_MOPUP] = hMopUpMap
 
+     AdManager.hInitializeAds(
+            this,
+            hIdsMap
+        )
+
 Step 6. By default all priorities are set to Admob->MopUp->Facebook-None. if one fails,
 
 other takes its place. To change the priorities use following methods:
@@ -100,13 +106,13 @@ found in "fallbackstrategies" package. To create ur own, create a class which ex
 
 "Strategy" interface.
 
-Step 7. Call the relevant methods from Ui to display ads.
+Step 7. Call the relevant methods from Ui to display Ads.
 
      AdManager.hShowNativeAdvanced(hMainBinding.hNativeAdvancedBanner)
      AdManager.hShowNativeBanner(hMainBinding.hNativeBanner)
      AdManager.hShowBanner(hMainBinding.hBannerContainer)
 
-If you don't want to fallback to others ads and only use fixed ads then use the following
+If you don't want to fallback to others Ads and only use fixed Ads then use the following
 
 methods.
 
@@ -123,7 +129,7 @@ methods.
       AdPriorityType.H_MOP_UP
       )
 
-Above methods will only show Mopup ads, if it fails, none will be shown in its place.
+Above methods will only show Mopup Ads, if it fails, none will be shown in its place.
 
 By default AdContainers i.e. HnativeBannerView and HnativeAdvacncedView are rounded and
 
