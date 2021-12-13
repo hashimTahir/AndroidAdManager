@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="90dp"
+    android:padding="3dp"
+    android:visibility="visible">
+
+    <View
+        android:layout_width="@dimen/_10dp"
+        android:layout_height="@dimen/_10dp"
+        android:layout_gravity="start|top"
+        android:layout_marginStart="@dimen/_10dp"
+        android:background="@color/shimerColor"
+        android:paddingStart="@dimen/_2dp"
+        android:paddingEnd="@dimen/_2dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/media_card"
+        app:layout_constraintTop_toBottomOf="@+id/icon_card" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/media_card"
+        android:layout_width="@dimen/_45dp"
+        android:layout_height="@dimen/_45dp"
+        app:cardBackgroundColor="@color/shimerColor"
+        app:cardCornerRadius="@dimen/cardElevation"
+        app:cardElevation="@dimen/cardElevation"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/icon_card"
+        android:layout_width="@dimen/_20dp"
+        android:layout_height="@dimen/_20dp"
+        android:layout_marginStart="@dimen/_10dp"
+        app:cardBackgroundColor="@color/shimerColor"
+        app:cardCornerRadius="@dimen/_5dp"
+        app:cardElevation="@dimen/cardElevation"
+        app:layout_constraintStart_toEndOf="@+id/media_card"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="@dimen/_20dp"
+        android:background="@drawable/btn_mopub"
+        android:backgroundTint="@color/shimerColor"
+        android:textAllCaps="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/ad_body"
+        app:layout_constraintStart_toStartOf="@+id/ad_body" />
+
+    <View
+        android:id="@+id/ad_body"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/_10dp"
+        android:layout_marginStart="@dimen/_5dp"
+        android:layout_marginTop="@dimen/_3dp"
+        android:layout_marginEnd="@dimen/_3dp"
+        android:background="@color/shimerColor"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/icon_card"
+        app:layout_constraintTop_toBottomOf="@+id/ad_headline" />
+
+    <View
+        android:id="@+id/ad_headline"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/_10dp"
+        android:layout_marginStart="@dimen/_5dp"
+        android:layout_marginEnd="@dimen/_3dp"
+        android:background="@color/shimerColor"
+        android:lines="1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/icon_card"
+        app:layout_constraintTop_toTopOf="@+id/icon_card" />
+</androidx.constraintlayout.widget.ConstraintLayout>
+

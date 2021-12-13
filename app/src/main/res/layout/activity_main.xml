@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.hashim.admanager.MainActivity">
+
+    <com.hashim.hadmanager.adsmodule.customadview.HnativeAdvancedView
+        android:id="@+id/hNativeAdvancedBanner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:hLoaderContainer="@layout/native_advanced_alternative"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.hashim.hadmanager.adsmodule.customadview.HnativeBannerView
+        android:id="@+id/hNativeBanner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/hNativeAdvancedBanner" />
+
+
+    <Button
+        android:id="@+id/hShowInter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:text="Show InterAd"
+        app:layout_constraintTop_toBottomOf="@+id/hNativeBanner" />
+
+    <FrameLayout
+        android:id="@+id/hBannerContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

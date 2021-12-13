@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Android Ad Manager</string>
+
+    <string name="admob_app_id">@string/AdMob_AppId</string>
+    <string name="admob_banner_id">@string/Admob_BannerId</string>
+    <string name="admob_native_advanced_id">@string/Admob_NativeAdvancedId</string>
+    <string name="admob_interstitial_id">@string/Admob_InterstitialId</string>
+
+    <string name="fb_interstitial_id">@string/Fb_InterstitialId</string>
+    <string name="fb_native_advanced_id">@string/Fb_NativeAdvancedId</string>
+    <string name="fb_native_banner_id">@string/Fb_Native_BannerId</string>
+    <string name="fb_banner_id">@string/Fb_BannerId</string>
+
+    <string name="mopub_banner_id">@string/Mopub_BannerId</string>
+    <string name="mopub_interstitial_id">@string/Mopub_InterstitialId</string>
+    <string name="mopup_native_banner_id">@string/Mopup_Native_BannerId</string>
+</resources>

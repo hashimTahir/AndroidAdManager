@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/_4dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/native_outer_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="4dp"
+        android:textDirection="locale">
+
+        <ImageView
+            android:id="@+id/native_icon_image"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="8dp"
+            android:background="@null"
+            android:contentDescription="@null"
+            app:layout_constraintBottom_toBottomOf="@+id/native_cta"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/native_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/native_cta"
+            app:layout_constraintStart_toEndOf="@+id/native_icon_image"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/native_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/native_icon_image"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toStartOf="@+id/native_cta"
+            app:layout_constraintStart_toEndOf="@+id/native_icon_image"
+            app:layout_constraintTop_toBottomOf="@+id/native_title" />
+
+
+        <TextView
+            android:id="@+id/native_sponsored_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/native_cta"
+            app:layout_constraintStart_toEndOf="@+id/native_icon_image"
+            app:layout_constraintTop_toBottomOf="@+id/native_text" />
+
+        <Button
+            android:id="@+id/native_cta"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/btn_mopub"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="8dp"
+            android:text="Learn More"
+            android:textColor="@color/gnt_white"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/native_privacy_information_icon_image"
+            tools:layout_editor_absoluteX="316dp" />
+
+        <ImageView
+            android:id="@+id/native_privacy_information_icon_image"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintEnd_toEndOf="@+id/native_cta"
+            app:layout_constraintStart_toStartOf="@+id/native_cta"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</RelativeLayout>
