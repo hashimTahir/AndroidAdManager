@@ -12,6 +12,8 @@ import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import com.google.android.gms.ads.nativead.NativeAd
 import com.hashim.hadmanager.R
+import com.hashim.hadmanager.adsmodule.callbacks.InterCallbacks
+import com.hashim.hadmanager.adsmodule.callbacks.NativeCallBacks
 import com.hashim.hadmanager.adsmodule.customadview.HnativeAdvancedView
 import com.hashim.hadmanager.adsmodule.customadview.HnativeBannerView
 import com.hashim.hadmanager.adsmodule.types.AdsType
@@ -20,7 +22,6 @@ import com.hashim.hadmanager.databinding.AdmobNativeAdvancedLayoutBinding
 import com.hashim.hadmanager.databinding.AdmobNativeBannerLayoutBinding
 import com.hashim.hadmanager.templates.NativeTemplateStyle
 import timber.log.Timber
-import java.util.*
 
 
 class AdMobManager(
@@ -30,14 +31,11 @@ class AdMobManager(
     var hInterstitialAd: InterstitialAd? = null
         private set
     private var hBannerAdView: AdView? = null
+    private var hInterCallbacks: InterCallbacks? = null
+    private var hNativeCallBacks: NativeCallBacks? = null
 
 
-    fun hLoadInterstitialAd(
-        hOnAdMobInterStitialFailed: (
-            adsType: AdsType,
-            errorMessage: String
-        ) -> Unit
-    ) {
+    fun hLoadInterstitialAd() {
         hIdsMap?.get(WhatAd.H_INTER)?.let { interId ->
             val adRequest = AdRequest.Builder().build()
 
@@ -49,14 +47,22 @@ class AdMobManager(
                     override fun onAdLoaded(interstitialAd: InterstitialAd) {
                         this@AdMobManager.hInterstitialAd = interstitialAd
                         interstitialAd.fullScreenContentCallback = hFullScreenContentCallback
+                        hInterCallbacks?.hOnAddLoaded(hAdType = AdsType.H_ADMOB)
                     }
 
                     override fun onAdFailedToLoad(loadAdError: LoadAdError) {
-                        hOnAdMobInterStitialFailed(
-                            AdsType.H_ADMOB,
-                            loadAdError.message
-                        )
+                        Error(
+                            hMessage = loadAdError.message,
+                            hCode = loadAdError.code,
+                            hDomain = loadAdError.domain,
+                        ).apply {
+                            hInterCallbacks?.hOnAdFailedToLoad(
+                                hAdType = AdsType.H_ADMOB,
+                                hError = this,
+                            )
+                        }
                     }
+
                 })
         }
     }
@@ -64,16 +70,23 @@ class AdMobManager(
     var hFullScreenContentCallback: FullScreenContentCallback =
         object : FullScreenContentCallback() {
             override fun onAdDismissedFullScreenContent() {
-                hLoadInterstitialAd { adsType, errorMessage ->
-
-                }
+                hInterCallbacks?.hOnAddDismissed(AdsType.H_ADMOB)
             }
 
             override fun onAdFailedToShowFullScreenContent(adError: AdError) {
+
+                hInterCallbacks?.hOnAdFailedToShowFullContent(
+                    hAdType = AdsType.H_ADMOB,
+                    hError = Error(
+                        hMessage = adError.message,
+                        hCode = adError.code,
+                        hDomain = adError.domain,
+                    )
+                )
             }
 
             override fun onAdShowedFullScreenContent() {
-
+                hInterCallbacks?.hOnAddShowed(AdsType.H_ADMOB)
                 hInterstitialAd = null
             }
         }
@@ -113,7 +126,6 @@ class AdMobManager(
                 }.withAdListener(object : AdListener() {
                     override fun onAdFailedToLoad(loadAdError: LoadAdError) {
                         super.onAdFailedToLoad(loadAdError)
-                        Timber.d("On AdMob Failed.")
                         hNativeBannerView.hShowHideAdLoader(true)
                         hOnAdMobNativeBannerFailed(
                             AdsType.H_ADMOB,
@@ -201,12 +213,7 @@ class AdMobManager(
     }
 
     fun hShowNativeAdvanced(
-        hNativeAdvancedView: HnativeAdvancedView,
-        hOnAdMobNativeAdvancedFailded: (
-            adsType: AdsType,
-            message: String,
-            nativeAdvancedView: HnativeAdvancedView,
-        ) -> Unit,
+        hNativeAdvancedView: HnativeAdvancedView
     ) {
         hIdsMap?.get(WhatAd.H_NATIVE_ADVANCED)?.let { nativeAdvancedId ->
             val adLoader = AdLoader.Builder(
@@ -233,11 +240,40 @@ class AdMobManager(
                     override fun onAdFailedToLoad(loadAdError: LoadAdError) {
                         super.onAdFailedToLoad(loadAdError)
                         hNativeAdvancedView.hShowHideAdLoader(true)
-                        hOnAdMobNativeAdvancedFailded(
-                            AdsType.H_ADMOB,
-                            loadAdError.message,
-                            hNativeAdvancedView,
+
+                        hNativeCallBacks?.hOnNativeAdvancedFailed(
+                            hAdType = AdsType.H_ADMOB,
+                            hError = Error(
+                                hMessage = loadAdError.message,
+                                hCode = loadAdError.code,
+                                hDomain = loadAdError.domain,
+                            ),
+                            hNativeAdvanceView = hNativeAdvancedView,
                         )
+                    }
+
+                    override fun onAdClosed() {
+                        hNativeCallBacks?.hOnAdClosed(hAdType = AdsType.H_ADMOB)
+                    }
+
+                    override fun onAdOpened() {
+                        super.onAdOpened()
+                        hNativeCallBacks?.hOnAdOpened(hAdType = AdsType.H_ADMOB)
+                    }
+
+                    override fun onAdLoaded() {
+                        super.onAdLoaded()
+                        hNativeCallBacks?.hOnAdLoaded(hAdType = AdsType.H_ADMOB)
+                    }
+
+                    override fun onAdClicked() {
+                        super.onAdClicked()
+                        hNativeCallBacks?.hOnAdClicked(hAdType = AdsType.H_ADMOB)
+                    }
+
+                    override fun onAdImpression() {
+                        super.onAdImpression()
+                        hNativeCallBacks?.hOnAdImpression(hAdType = AdsType.H_ADMOB)
                     }
                 })
                 .build()
@@ -246,6 +282,12 @@ class AdMobManager(
 
     }
 
+    fun hSetInterCallbacks(interCallbacks: InterCallbacks) {
+        hInterCallbacks = interCallbacks
+    }
+    fun hSetNativeCallBacks(nativeCallBacks: NativeCallBacks) {
+        hNativeCallBacks = nativeCallBacks
+    }
     companion object {
         fun hGetPixelFromDp(application: Context?, dp: Int): Int {
             val display =
@@ -261,7 +303,7 @@ class AdMobManager(
     init {
         hContext?.let { context ->
             MobileAds.initialize(context) { initializationStatus ->
-                Timber.d("Ad Mob Initiliztion status $initializationStatus")
+                Timber.d("Ad Mob Initiliztion status ${initializationStatus.adapterStatusMap}")
             }
         }
     }

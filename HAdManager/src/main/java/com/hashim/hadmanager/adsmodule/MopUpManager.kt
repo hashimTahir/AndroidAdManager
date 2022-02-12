@@ -12,6 +12,8 @@ import android.widget.TextView
 import com.facebook.ads.AudienceNetworkAds
 import com.hashim.hadmanager.BuildConfig
 import com.hashim.hadmanager.R
+import com.hashim.hadmanager.adsmodule.callbacks.InterCallbacks
+import com.hashim.hadmanager.adsmodule.callbacks.NativeCallBacks
 import com.hashim.hadmanager.adsmodule.customadview.HnativeAdvancedView
 import com.hashim.hadmanager.adsmodule.customadview.HnativeBannerView
 import com.hashim.hadmanager.adsmodule.types.AdsType
@@ -24,7 +26,6 @@ import com.mopub.mobileads.MoPubErrorCode
 import com.mopub.mobileads.MoPubInterstitial
 import com.mopub.mobileads.MoPubView
 import com.mopub.nativeads.*
-import java.util.*
 
 
 class MopUpManager(
@@ -36,14 +37,12 @@ class MopUpManager(
 
     private var hMopupNativeAdvanced: MoPubNative? = null
     private var hMopupNativeBanner: MoPubNative? = null
+    private var hInterCallbacks: InterCallbacks? = null
+    private var hNativeCallBacks: NativeCallBacks? = null
 
 
     fun loadInterstitialAd(
         activity: Activity?,
-        hOnMopupInterStitialFailed: (
-            adsType: AdsType,
-            errorMessage: String
-        ) -> Unit
     ) {
 
         hIdsMap?.get(WhatAd.H_INTER)?.let { interId ->
@@ -54,21 +53,25 @@ class MopUpManager(
             hMopubInterstitial?.interstitialAdListener =
                 object : MoPubInterstitial.InterstitialAdListener {
                     override fun onInterstitialLoaded(interstitial: MoPubInterstitial) {
-
+                        hInterCallbacks?.hOnAddLoaded(hAdType = AdsType.H_MOPUP)
                     }
 
                     override fun onInterstitialFailed(
                         interstitial: MoPubInterstitial,
                         errorCode: MoPubErrorCode
                     ) {
-                        hOnMopupInterStitialFailed(
-                            AdsType.H_MOPUP,
-                            errorCode.name
+                        hInterCallbacks?.hOnAdFailedToLoad(
+                            hAdType = AdsType.H_MOPUP,
+                            hActivity = activity,
+                            hError = Error(
+                                hMessage = errorCode.name,
+                                hCode = errorCode.intCode
+                            )
                         )
                     }
 
                     override fun onInterstitialShown(interstitial: MoPubInterstitial) {
-
+                        hInterCallbacks?.hOnAddShowed(AdsType.H_MOPUP)
                     }
 
                     override fun onInterstitialClicked(interstitial: MoPubInterstitial) {
@@ -76,9 +79,7 @@ class MopUpManager(
                     }
 
                     override fun onInterstitialDismissed(interstitial: MoPubInterstitial) {
-                        loadInterstitialAd(activity) { adsType, errorMessage ->
-
-                        }
+                        hInterCallbacks?.hOnAddDismissed(AdsType.H_MOPUP)
                     }
                 }
             hMopubInterstitial?.load()
@@ -147,11 +148,6 @@ class MopUpManager(
 
     fun hShowNativeAdvanced(
         nativeAdvancedView: HnativeAdvancedView,
-        hOnMopUpNativeAdvancedFailded: (
-            adsType: AdsType,
-            message: String,
-            adContainerView: HnativeAdvancedView,
-        ) -> Unit,
     ) {
         hIdsMap?.get(WhatAd.H_NATIVE_ADVANCED)?.let { nativeAdvancedId ->
             hMopupNativeAdvanced = MoPubNative(
@@ -159,14 +155,17 @@ class MopUpManager(
                 nativeAdvancedId,
                 object : MoPubNative.MoPubNativeNetworkListener {
                     override fun onNativeLoad(nativeAd: NativeAd) {
+                        hNativeCallBacks?.hOnAdLoaded(hAdType = AdsType.H_MOPUP)
                         val ctx = myApplication
                         val moPubNativeEventListener: NativeAd.MoPubNativeEventListener =
                             object : NativeAd.MoPubNativeEventListener {
 
                                 override fun onImpression(view: View?) {
+                                    hNativeCallBacks?.hOnAdImpression(hAdType = AdsType.H_MOPUP)
                                 }
 
                                 override fun onClick(view: View?) {
+                                    hNativeCallBacks?.hOnAdClicked(hAdType = AdsType.H_MOPUP)
                                 }
                             }
                         val adapterHelper = AdapterHelper(ctx, 0, 2)
@@ -183,10 +182,13 @@ class MopUpManager(
 
                     override fun onNativeFail(errorCode: NativeErrorCode) {
                         nativeAdvancedView.hShowHideAdLoader(hShowLoader = true)
-                        hOnMopUpNativeAdvancedFailded(
-                            AdsType.H_MOPUP,
-                            errorCode.name,
-                            nativeAdvancedView,
+                        hNativeCallBacks?.hOnNativeAdvancedFailed(
+                            hAdType = AdsType.H_MOPUP,
+                            hError = Error(
+                                hMessage = errorCode.name,
+                                hCode = errorCode.intCode,
+                            ),
+                            hNativeAdvanceView = nativeAdvancedView,
                         )
                     }
                 }
@@ -290,6 +292,13 @@ class MopUpManager(
                 }
             }
         }
+    }
+
+    fun hSetInterCallbacks(interCallbacks: AdManager) {
+        hInterCallbacks = interCallbacks
+    }
+    fun hSetNativeCallBacks(nativeCallBacks: NativeCallBacks) {
+        hNativeCallBacks = nativeCallBacks
     }
 
     init {
