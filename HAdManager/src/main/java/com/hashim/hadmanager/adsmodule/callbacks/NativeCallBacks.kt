@@ -1,20 +1,44 @@
 package com.hashim.hadmanager.adsmodule.callbacks
 
+import android.view.ViewGroup
 import com.hashim.hadmanager.adsmodule.Error
-import com.hashim.hadmanager.adsmodule.customadview.HnativeAdvancedView
 import com.hashim.hadmanager.adsmodule.types.AdsType
+import com.hashim.hadmanager.adsmodule.types.WhatAd
 
-interface NativeCallBacks {
-    fun hOnNativeAdvancedFailed(
+
+interface NativeCallbacks {
+
+    fun hAdLoaded(
         hAdType: AdsType,
-        hError: Error,
-        hNativeAdvanceView: HnativeAdvancedView
+        hWhatAd: WhatAd,
     )
 
-    fun hOnAdClosed(hAdType: AdsType)
-    fun hOnAdOpened(hAdType: AdsType)
-    fun hOnAdLoaded(hAdType: AdsType)
-    fun hOnAdClicked(hAdType: AdsType)
-    fun hOnAdImpression(hAdType: AdsType)
+    fun hAdClicked(
+        hAdType: AdsType,
+        hWhatAd: WhatAd
+    )
+
+    fun hAdImpression(
+        hAdType: AdsType,
+        hWhatAd: WhatAd
+    )
+
+    fun hAdClosed(
+        hAdType: AdsType,
+        hWhatAd: WhatAd
+    )
+
+    fun hAdFailedToLoad(
+        hAdType: AdsType,
+        hWhatAd: WhatAd,
+        hError: Error,
+        hNativeView: ViewGroup
+    )
+
+    fun hNativeAdOpened(
+        hAdType: AdsType,
+        hWhatAd: WhatAd
+    )
 
 }
+

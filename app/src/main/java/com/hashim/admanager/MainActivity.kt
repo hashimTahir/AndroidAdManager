@@ -2,17 +2,18 @@ package com.hashim.admanager
 
 import android.app.Activity
 import android.os.Bundle
+import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import com.hashim.admanager.databinding.ActivityMainBinding
 import com.hashim.hadmanager.adsmodule.AdManager
 import com.hashim.hadmanager.adsmodule.Error
 import com.hashim.hadmanager.adsmodule.callbacks.InterCallbacks
-import com.hashim.hadmanager.adsmodule.callbacks.NativeCallBacks
-import com.hashim.hadmanager.adsmodule.customadview.HnativeAdvancedView
+import com.hashim.hadmanager.adsmodule.callbacks.NativeCallbacks
 import com.hashim.hadmanager.adsmodule.types.AdsType
+import com.hashim.hadmanager.adsmodule.types.WhatAd
 import timber.log.Timber
 
-class MainActivity : AppCompatActivity(), InterCallbacks, NativeCallBacks {
+class MainActivity : AppCompatActivity(), InterCallbacks, NativeCallbacks {
     private lateinit var hMainBinding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -20,14 +21,14 @@ class MainActivity : AppCompatActivity(), InterCallbacks, NativeCallBacks {
         hMainBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(hMainBinding.root)
 
-//        AdManager.hLoadInterstitial(this)
         AdManager.hSetInterCallbacks(this)
-        AdManager.hSetNativeCallBacks(this)
+        AdManager.hSetNativeCallbacks(this)
 
 
+        AdManager.hLoadInterstitial(this)
         AdManager.hShowNativeAdvanced(hMainBinding.hNativeAdvancedBanner)
-//        AdManager.hShowNativeBanner(hMainBinding.hNativeBanner)
-//        AdManager.hShowBanner(hMainBinding.hBannerContainer)
+        AdManager.hShowNativeBanner(hMainBinding.hNativeBanner)
+        AdManager.hShowBannerWithOutFallback(hMainBinding.hBannerContainer)
 
 
         hMainBinding.hShowInter.setOnClickListener {
@@ -57,27 +58,28 @@ class MainActivity : AppCompatActivity(), InterCallbacks, NativeCallBacks {
         Timber.d("hOnAddDismissed And AdType is $hAdType")
     }
 
-    override fun hOnNativeAdvancedFailed(hAdType: AdsType, hError: Error, hNativeAdvanceView: HnativeAdvancedView) {
-        Timber.d("hOnNativeAdvancedFailed And AdType is $hAdType")
+    override fun hAdLoaded(hAdType: AdsType, hWhatAd: WhatAd) {
+        Timber.d("hNativeAdvLoaded And AdType is $hAdType and What Add $hWhatAd")
     }
 
-    override fun hOnAdClosed(hAdType: AdsType) {
-        Timber.d("hOnAdClosed And AdType is $hAdType")
+    override fun hAdClicked(hAdType: AdsType, hWhatAd: WhatAd) {
+        Timber.d("hNativeAdvClicked And AdType is $hAdType  and What Add $hWhatAd")
     }
 
-    override fun hOnAdOpened(hAdType: AdsType) {
-        Timber.d("hOnAdOpened And AdType is $hAdType")
+    override fun hAdImpression(hAdType: AdsType, hWhatAd: WhatAd) {
+        Timber.d("hNativeAdvImpression And AdType is $hAdType  and What Add $hWhatAd")
     }
 
-    override fun hOnAdLoaded(hAdType: AdsType) {
-        Timber.d("hOnAdLoaded And AdType is $hAdType")
+    override fun hAdClosed(hAdType: AdsType, hWhatAd: WhatAd) {
+        Timber.d("hNativeAdvClosed And AdType is $hAdType  and What Add $hWhatAd")
     }
 
-    override fun hOnAdClicked(hAdType: AdsType) {
-        Timber.d("hOnAdClicked And AdType is $hAdType")
+    override fun hAdFailedToLoad(hAdType: AdsType, hWhatAd: WhatAd, hError: Error, hNativeView: ViewGroup) {
+        Timber.d("hNativeAdvFailedToLoad And AdType is $hAdType and error is $hError  and What Add $hWhatAd")
     }
 
-    override fun hOnAdImpression(hAdType: AdsType) {
-        Timber.d("hOnAdImpression And AdType is $hAdType")
+
+    override fun hNativeAdOpened(hAdType: AdsType, hWhatAd: WhatAd) {
+        Timber.d("hNativeAdvOpened And AdType is $hAdType  and What Add $hWhatAd")
     }
 }

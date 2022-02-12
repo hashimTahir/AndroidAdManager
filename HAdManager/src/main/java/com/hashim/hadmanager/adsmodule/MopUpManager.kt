@@ -13,7 +13,7 @@ import com.facebook.ads.AudienceNetworkAds
 import com.hashim.hadmanager.BuildConfig
 import com.hashim.hadmanager.R
 import com.hashim.hadmanager.adsmodule.callbacks.InterCallbacks
-import com.hashim.hadmanager.adsmodule.callbacks.NativeCallBacks
+import com.hashim.hadmanager.adsmodule.callbacks.NativeCallbacks
 import com.hashim.hadmanager.adsmodule.customadview.HnativeAdvancedView
 import com.hashim.hadmanager.adsmodule.customadview.HnativeBannerView
 import com.hashim.hadmanager.adsmodule.types.AdsType
@@ -38,7 +38,7 @@ class MopUpManager(
     private var hMopupNativeAdvanced: MoPubNative? = null
     private var hMopupNativeBanner: MoPubNative? = null
     private var hInterCallbacks: InterCallbacks? = null
-    private var hNativeCallBacks: NativeCallBacks? = null
+    private var hNativeCallbacks: NativeCallbacks? = null
 
 
     fun loadInterstitialAd(
@@ -53,7 +53,7 @@ class MopUpManager(
             hMopubInterstitial?.interstitialAdListener =
                 object : MoPubInterstitial.InterstitialAdListener {
                     override fun onInterstitialLoaded(interstitial: MoPubInterstitial) {
-                        hInterCallbacks?.hOnAddLoaded(hAdType = AdsType.H_MOPUP)
+
                     }
 
                     override fun onInterstitialFailed(
@@ -88,12 +88,7 @@ class MopUpManager(
     }
 
     fun hShowBanner(
-        bannerView: ViewGroup,
-        hOnMopUpBannerFailed: (
-            adsType: AdsType,
-            message: String,
-            adContainerView: ViewGroup
-        ) -> Unit,
+        bannerView: ViewGroup
     ) {
 
         hIdsMap?.get(WhatAd.H_BANNER)?.let { bannerId ->
@@ -105,21 +100,47 @@ class MopUpManager(
             addPlaceHolderTextView(bannerView)
             moPubView.bannerAdListener = object : MoPubView.BannerAdListener {
                 override fun onBannerLoaded(banner: MoPubView) {
+                    hNativeCallbacks?.hAdLoaded(
+                        hAdType = AdsType.H_MOPUP,
+                        hWhatAd = WhatAd.H_BANNER
+                    )
                     bannerView.removeAllViews()
                     bannerView.addView(moPubView)
                 }
 
                 override fun onBannerFailed(banner: MoPubView, errorCode: MoPubErrorCode) {
-                    hOnMopUpBannerFailed(
-                        AdsType.H_MOPUP,
-                        errorCode.name,
-                        bannerView
+                    hNativeCallbacks?.hAdFailedToLoad(
+                        hAdType = AdsType.H_MOPUP,
+                        hError = Error(
+                            hMessage = errorCode.name,
+                            hCode = errorCode.intCode,
+                        ),
+                        hNativeView = bannerView,
+                        hWhatAd = WhatAd.H_BANNER
                     )
                 }
 
-                override fun onBannerClicked(banner: MoPubView) {}
-                override fun onBannerExpanded(banner: MoPubView) {}
-                override fun onBannerCollapsed(banner: MoPubView) {}
+                override fun onBannerClicked(banner: MoPubView) {
+                    hNativeCallbacks?.hAdClicked(
+                        hAdType = AdsType.H_MOPUP,
+                        hWhatAd = WhatAd.H_BANNER
+                    )
+                }
+
+                override fun onBannerExpanded(banner: MoPubView) {
+                    hNativeCallbacks?.hNativeAdOpened(
+                        hAdType = AdsType.H_MOPUP,
+                        hWhatAd = WhatAd.H_BANNER
+                    )
+                }
+
+                override fun onBannerCollapsed(banner: MoPubView) {
+                    hNativeCallbacks?.hAdClosed(
+                        hAdType = AdsType.H_MOPUP,
+                        hWhatAd = WhatAd.H_BANNER
+                    )
+                }
+
             }
         }
 
@@ -155,18 +176,29 @@ class MopUpManager(
                 nativeAdvancedId,
                 object : MoPubNative.MoPubNativeNetworkListener {
                     override fun onNativeLoad(nativeAd: NativeAd) {
-                        hNativeCallBacks?.hOnAdLoaded(hAdType = AdsType.H_MOPUP)
+                        hNativeCallbacks?.hAdLoaded(
+                            hAdType = AdsType.H_MOPUP,
+                            hWhatAd = WhatAd.H_NATIVE_ADVANCED
+                        )
+
                         val ctx = myApplication
                         val moPubNativeEventListener: NativeAd.MoPubNativeEventListener =
                             object : NativeAd.MoPubNativeEventListener {
 
                                 override fun onImpression(view: View?) {
-                                    hNativeCallBacks?.hOnAdImpression(hAdType = AdsType.H_MOPUP)
+                                    hNativeCallbacks?.hAdImpression(
+                                        hAdType = AdsType.H_MOPUP,
+                                        hWhatAd = WhatAd.H_NATIVE_ADVANCED
+                                    )
                                 }
 
                                 override fun onClick(view: View?) {
-                                    hNativeCallBacks?.hOnAdClicked(hAdType = AdsType.H_MOPUP)
+                                    hNativeCallbacks?.hAdClicked(
+                                        hAdType = AdsType.H_MOPUP,
+                                        hWhatAd = WhatAd.H_NATIVE_ADVANCED
+                                    )
                                 }
+
                             }
                         val adapterHelper = AdapterHelper(ctx, 0, 2)
                         val adView: View = adapterHelper.getAdView(
@@ -182,15 +214,17 @@ class MopUpManager(
 
                     override fun onNativeFail(errorCode: NativeErrorCode) {
                         nativeAdvancedView.hShowHideAdLoader(hShowLoader = true)
-                        hNativeCallBacks?.hOnNativeAdvancedFailed(
+                        hNativeCallbacks?.hAdFailedToLoad(
                             hAdType = AdsType.H_MOPUP,
                             hError = Error(
                                 hMessage = errorCode.name,
                                 hCode = errorCode.intCode,
                             ),
-                            hNativeAdvanceView = nativeAdvancedView,
+                            hNativeView = nativeAdvancedView,
+                            hWhatAd = WhatAd.H_NATIVE_ADVANCED
                         )
                     }
+
                 }
             )
 
@@ -217,12 +251,7 @@ class MopUpManager(
 
 
     fun hShowNativeBanner(
-        hAdContainer: HnativeBannerView,
-        hOnMopUpNativeBannerFailed: (
-            adsType: AdsType,
-            errorMessage: String,
-            hAdContainer: HnativeBannerView,
-        ) -> Unit
+        hNativeBannerView: HnativeBannerView,
     ) {
         hIdsMap?.get(WhatAd.H_NATIVE_BANNER)?.let { nativeBannerId ->
             hMopupNativeBanner = MoPubNative(
@@ -231,13 +260,17 @@ class MopUpManager(
                 object : MoPubNative.MoPubNativeNetworkListener {
 
                     override fun onNativeLoad(nativeAd: NativeAd) {
+                        hNativeCallbacks?.hAdLoaded(
+                            hAdType = AdsType.H_MOPUP,
+                            hWhatAd = WhatAd.H_NATIVE_BANNER
+                        )
                         val ctx = myApplication
 
 
                         val adapterHelper = AdapterHelper(ctx, 0, 2)
                         val adView: View = adapterHelper.getAdView(
                             null,
-                            hAdContainer.hLayoutHAdcontainerBinding.hAdContainer,
+                            hNativeBannerView.hLayoutHAdcontainerBinding.hAdContainer,
                             nativeAd,
                             ViewBinder.Builder(0).build()
                         )
@@ -245,17 +278,24 @@ class MopUpManager(
                         nativeAd.prepare(adView)
                         nativeAd.renderAdView(adView)
 
-                        hAdContainer.hShowAdView(view = adView)
+                        hNativeBannerView.hShowAdView(view = adView)
 
 
                         val moPubNativeEventListener: NativeAd.MoPubNativeEventListener =
                             object : NativeAd.MoPubNativeEventListener {
 
                                 override fun onImpression(view: View?) {
-
+                                    hNativeCallbacks?.hAdImpression(
+                                        hAdType = AdsType.H_MOPUP,
+                                        hWhatAd = WhatAd.H_NATIVE_BANNER
+                                    )
                                 }
 
                                 override fun onClick(view: View?) {
+                                    hNativeCallbacks?.hAdClicked(
+                                        hAdType = AdsType.H_MOPUP,
+                                        hWhatAd = WhatAd.H_NATIVE_BANNER
+                                    )
                                 }
                             }
 
@@ -263,11 +303,15 @@ class MopUpManager(
                     }
 
                     override fun onNativeFail(errorCode: NativeErrorCode) {
-                        hAdContainer.hShowHideAdLoader(hShowLoader = true)
-                        hOnMopUpNativeBannerFailed(
-                            AdsType.H_MOPUP,
-                            errorCode.name,
-                            hAdContainer
+                        hNativeBannerView.hShowHideAdLoader(hShowLoader = true)
+                        hNativeCallbacks?.hAdFailedToLoad(
+                            hAdType = AdsType.H_MOPUP,
+                            hError = Error(
+                                hMessage = errorCode.name,
+                                hCode = errorCode.intCode,
+                            ),
+                            hNativeView = hNativeBannerView,
+                            hWhatAd = WhatAd.H_NATIVE_BANNER
                         )
                     }
                 }
@@ -297,8 +341,9 @@ class MopUpManager(
     fun hSetInterCallbacks(interCallbacks: AdManager) {
         hInterCallbacks = interCallbacks
     }
-    fun hSetNativeCallBacks(nativeCallBacks: NativeCallBacks) {
-        hNativeCallBacks = nativeCallBacks
+
+    fun hSetNativeCallbacks(nativeCallbacks: NativeCallbacks) {
+        hNativeCallbacks = nativeCallbacks
     }
 
     init {
