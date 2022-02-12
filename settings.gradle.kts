@@ -3,9 +3,8 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        jcenter() // Warning: this repository is going to shut down soon
     }
 }
-rootProject.name = "My Application"
-include ':app'
-include ':HAdManager'
+rootProject.name = "HAdManager"
+include(":app")
+include(":HAdManager")
