@@ -1,8 +1,7 @@
 # AndroidAdManager
 
 - Works with Admob, Mopup, Facebook- Bidding and Audience Networks.
-- Added ad types are NativeBanner, NativeAdvanced, Interstitial and Banner Ads for
-  Facebook, Admob and MopUp.
+- Added ad types are NativeBanner, NativeAdvanced, Interstitial and Banner Ads for Facebook, Admob and MopUp.
 - By Default some fallback strategies are added for all Ads in case any fails other takes its place.
 - Ui Always stays stable, no displacement.
 - Shimmer animations while Ads is loaded.
@@ -24,7 +23,7 @@ Add it in your root build.gradle at the end of repositories:
 Step 2. Add the dependency
 
 	dependencies {
-	        implementation 'com.github.hashimTahir:AndroidAdManager:1.1'
+	        implementation 'com.github.hashimTahir:AndroidAdManager:1.2'
 	}
 
 Step 3. Add the (Required) debug and release ids in the project level gradle file like so:
@@ -111,6 +110,13 @@ Step 7. Call the relevant methods from Ui to display Ads.
      AdManager.hShowNativeAdvanced(hMainBinding.hNativeAdvancedBanner)
      AdManager.hShowNativeBanner(hMainBinding.hNativeBanner)
      AdManager.hShowBanner(hMainBinding.hBannerContainer)
+
+Step 8. To set the Ads Callback use the following methods in your calling activity,
+and override the methods.
+
+      AdManager.hSetInterCallbacks(this)
+      AdManager.hSetNativeCallbacks(this)
+
 
 If you don't want to fallback to others Ads and only use fixed Ads then use the following
 
