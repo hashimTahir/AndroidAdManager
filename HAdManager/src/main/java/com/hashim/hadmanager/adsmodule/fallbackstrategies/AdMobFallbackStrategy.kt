@@ -4,7 +4,11 @@ import com.hashim.hadmanager.adsmodule.types.AdPriorityType
 import com.hashim.hadmanager.adsmodule.types.AdsType
 
 object AdMobFallbackStrategy : Strategy {
-    override fun hBannerStrategy(hGlobalPriority: AdPriorityType, hAdsType: AdsType): AdPriorityType {
+
+    override fun hBannerStrategy(
+        hGlobalPriority: AdPriorityType,
+        hAdsType: AdsType
+    ): AdPriorityType {
         return when (hGlobalPriority) {
             AdPriorityType.H_AD_MOB -> {
                 when (hAdsType) {

@@ -6,7 +6,7 @@ import com.hashim.hadmanager.adsmodule.types.AdsType
 import com.hashim.hadmanager.adsmodule.types.WhatAd
 
 
-interface NativeCallbacks {
+interface AdCallbacks {
 
     fun hAdLoaded(
         hAdType: AdsType,
@@ -32,7 +32,8 @@ interface NativeCallbacks {
         hAdType: AdsType,
         hWhatAd: WhatAd,
         hError: Error,
-        hNativeView: ViewGroup
+        hNativeView: ViewGroup,
+        hIsWithFallback: Boolean
     )
 
     fun hNativeAdOpened(

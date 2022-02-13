@@ -46,6 +46,7 @@ dependencies {
     implementation("com.facebook.android:audience-network-sdk:6.8.0")
     implementation("com.google.ads.mediation:facebook:6.8.0.0")
     implementation("com.mopub.mediation:facebookaudiencenetwork:6.5.1.0")
+    implementation("com.applovin:applovin-sdk:11.1.2")
     implementation("com.mopub:mopub-sdk:5.18.0@aar") {
         isTransitive = true
 

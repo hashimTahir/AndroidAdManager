@@ -3,8 +3,8 @@ package com.hashim.hadmanager.adsmodule
 import android.app.Activity
 import android.content.Context
 import android.view.ViewGroup
+import com.hashim.hadmanager.adsmodule.callbacks.AdCallbacks
 import com.hashim.hadmanager.adsmodule.callbacks.InterCallbacks
-import com.hashim.hadmanager.adsmodule.callbacks.NativeCallbacks
 import com.hashim.hadmanager.adsmodule.customadview.HnativeAdvancedView
 import com.hashim.hadmanager.adsmodule.customadview.HnativeBannerView
 import com.hashim.hadmanager.adsmodule.fallbackstrategies.AdMobFallbackStrategy
@@ -16,7 +16,7 @@ import com.hashim.hadmanager.adsmodule.types.AdsType
 import com.hashim.hadmanager.adsmodule.types.AdsType.*
 import com.hashim.hadmanager.adsmodule.types.WhatAd
 
-object AdManager : InterCallbacks, NativeCallbacks {
+object AdManager : InterCallbacks, AdCallbacks {
 
     private var hMopUpManager: MopUpManager? = null
     private var hFacebookManger: FaceBookAdManager? = null
@@ -29,7 +29,7 @@ object AdManager : InterCallbacks, NativeCallbacks {
     private var hInterstitialPriorityType: AdPriorityType = H_AD_MOB
 
     private var hInterCallbacks: InterCallbacks? = null
-    private var hNativeCallbacks: NativeCallbacks? = null
+    private var hAdCallbacks: AdCallbacks? = null
 
     fun hInitializeAds(
         hContext: Context,
@@ -74,8 +74,8 @@ object AdManager : InterCallbacks, NativeCallbacks {
         hInterCallbacks = interCallbacks
     }
 
-    fun hSetNativeCallbacks(nativeCallbacks: NativeCallbacks) {
-        hNativeCallbacks = nativeCallbacks
+    fun hSetNativeCallbacks(adCallbacks: AdCallbacks) {
+        hAdCallbacks = adCallbacks
     }
 
 
@@ -282,9 +282,18 @@ object AdManager : InterCallbacks, NativeCallbacks {
         hPriorityType: AdPriorityType = hBannerPriorityType
     ) {
         when (hPriorityType) {
-            H_AD_MOB -> hAdMobManager?.hShowBanner(bannerAdContainer)
-            H_MOP_UP -> hMopUpManager?.hShowBanner(bannerAdContainer)
-            H_FACE_BOOK -> hFacebookManger?.hShowBanner(bannerAdContainer)
+            H_AD_MOB -> hAdMobManager?.hShowBanner(
+                hAdViewGroup = bannerAdContainer,
+                hIsWithFallback = false
+            )
+            H_MOP_UP -> hMopUpManager?.hShowBanner(
+                hAdViewGroup = bannerAdContainer,
+                hIsWithFallback = false
+            )
+            H_FACE_BOOK -> hFacebookManger?.hShowBanner(
+                hAdViewGroup = bannerAdContainer,
+                hIsWithFallback = false
+            )
             else -> Unit
         }
     }
@@ -295,9 +304,18 @@ object AdManager : InterCallbacks, NativeCallbacks {
         hPriorityType: AdPriorityType = hNativeBannerPriorityType,
     ) {
         when (hPriorityType) {
-            H_AD_MOB -> hAdMobManager?.hShowNativeBanner(hHnativeBannerView)
-            H_MOP_UP -> hMopUpManager?.hShowNativeBanner(hHnativeBannerView)
-            H_FACE_BOOK -> hFacebookManger?.hShowNativeBanner(hHnativeBannerView)
+            H_AD_MOB -> hAdMobManager?.hShowNativeBanner(
+                hNativeBannerView = hHnativeBannerView,
+                hIsWithFallback = false
+            )
+            H_MOP_UP -> hMopUpManager?.hShowNativeBanner(
+                hNativeBannerView = hHnativeBannerView,
+                hIsWithFallback = false
+            )
+            H_FACE_BOOK -> hFacebookManger?.hShowNativeBanner(
+                hNativeBannerView = hHnativeBannerView,
+                hIsWithFallback = false
+            )
             else -> Unit
         }
     }
@@ -308,9 +326,18 @@ object AdManager : InterCallbacks, NativeCallbacks {
         hPriorityType: AdPriorityType = hNativeBannerPriorityType,
     ) {
         when (hPriorityType) {
-            H_AD_MOB -> hAdMobManager?.hShowNativeAdvanced(hHnativeBannerView)
-            H_MOP_UP -> hMopUpManager?.hShowNativeAdvanced(hHnativeBannerView)
-            H_FACE_BOOK -> hFacebookManger?.hShowNativeAdvanced(hHnativeBannerView)
+            H_AD_MOB -> hAdMobManager?.hShowNativeAdvanced(
+                hNativeAdvancedView = hHnativeBannerView,
+                hIsWithFallback = false
+            )
+            H_MOP_UP -> hMopUpManager?.hShowNativeAdvanced(
+                hNativeAdvancedView = hHnativeBannerView,
+                hIsWithFallback = false
+            )
+            H_FACE_BOOK -> hFacebookManger?.hShowNativeAdvanced(
+                hNativeAdvancedView = hHnativeBannerView,
+                hIsWithFallback = false
+            )
             else -> Unit
         }
     }
@@ -372,14 +399,13 @@ object AdManager : InterCallbacks, NativeCallbacks {
     /*-------------------End-InterCallBacks ------------------------*/
 
 
-    /*---------------------NativeCallbacks ------------------------*/
 
-
+    /*---------------------AddCallbacks ------------------------*/
     override fun hAdLoaded(
         hAdType: AdsType,
         hWhatAd: WhatAd
     ) {
-        hNativeCallbacks?.hAdLoaded(
+        hAdCallbacks?.hAdLoaded(
             hAdType = hAdType,
             hWhatAd = hWhatAd
         )
@@ -389,7 +415,7 @@ object AdManager : InterCallbacks, NativeCallbacks {
         hAdType: AdsType,
         hWhatAd: WhatAd
     ) {
-        hNativeCallbacks?.hAdClicked(
+        hAdCallbacks?.hAdClicked(
             hAdType = hAdType,
             hWhatAd = hWhatAd
         )
@@ -399,7 +425,7 @@ object AdManager : InterCallbacks, NativeCallbacks {
         hAdType: AdsType,
         hWhatAd: WhatAd
     ) {
-        hNativeCallbacks?.hAdImpression(
+        hAdCallbacks?.hAdImpression(
             hAdType = hAdType,
             hWhatAd = hWhatAd
         )
@@ -409,7 +435,7 @@ object AdManager : InterCallbacks, NativeCallbacks {
         hAdType: AdsType,
         hWhatAd: WhatAd
     ) {
-        hNativeCallbacks?.hAdClosed(
+        hAdCallbacks?.hAdClosed(
             hAdType = hAdType,
             hWhatAd = hWhatAd
         )
@@ -419,37 +445,43 @@ object AdManager : InterCallbacks, NativeCallbacks {
         hAdType: AdsType,
         hWhatAd: WhatAd,
         hError: Error,
-        hNativeView: ViewGroup
+        hNativeView: ViewGroup,
+        hIsWithFallback: Boolean
     ) {
-        hNativeCallbacks?.hAdFailedToLoad(
+        hAdCallbacks?.hAdFailedToLoad(
             hAdType = hAdType,
             hWhatAd = hWhatAd,
             hError = hError,
             hNativeView = hNativeView,
+            hIsWithFallback = hIsWithFallback,
 
             )
-        when (hWhatAd) {
-            WhatAd.H_NATIVE_BANNER -> hShowNativeBanner(
-                hHnativeBannerView = hNativeView as HnativeBannerView,
-                hPriorityType = hGetFallBackPriorityForNativeBanner(hAdsType = hAdType)
-            )
-            WhatAd.H_NATIVE_ADVANCED -> hShowNativeAdvanced(
-                hnativeAdvancedView = hNativeView as HnativeAdvancedView,
-                hPriorityType = hGetFallbackPriorityForNativeAdvanced(hAdsType = hAdType)
-            )
-            WhatAd.H_BANNER -> hShowBanner(
-                bannerAdContainer = hNativeView,
-                hPriorityType = hGetFallbackPriorityForBanner(hAdsType = hAdType)
-            )
-            WhatAd.H_INTER -> Unit
+        when (hIsWithFallback) {
+            true -> when (hWhatAd) {
+                WhatAd.H_NATIVE_BANNER -> hShowNativeBanner(
+                    hHnativeBannerView = hNativeView as HnativeBannerView,
+                    hPriorityType = hGetFallBackPriorityForNativeBanner(hAdsType = hAdType)
+                )
+                WhatAd.H_NATIVE_ADVANCED -> hShowNativeAdvanced(
+                    hnativeAdvancedView = hNativeView as HnativeAdvancedView,
+                    hPriorityType = hGetFallbackPriorityForNativeAdvanced(hAdsType = hAdType)
+                )
+                WhatAd.H_BANNER -> hShowBanner(
+                    bannerAdContainer = hNativeView,
+                    hPriorityType = hGetFallbackPriorityForBanner(hAdsType = hAdType)
+                )
+                WhatAd.H_INTER -> Unit
+            }
+            false -> Unit
         }
+
     }
 
     override fun hNativeAdOpened(
         hAdType: AdsType,
         hWhatAd: WhatAd
     ) {
-        hNativeCallbacks?.hNativeAdOpened(
+        hAdCallbacks?.hNativeAdOpened(
             hAdType = hAdType,
             hWhatAd = hWhatAd
         )

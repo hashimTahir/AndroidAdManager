@@ -8,12 +8,12 @@ import com.hashim.admanager.databinding.ActivityMainBinding
 import com.hashim.hadmanager.adsmodule.AdManager
 import com.hashim.hadmanager.adsmodule.Error
 import com.hashim.hadmanager.adsmodule.callbacks.InterCallbacks
-import com.hashim.hadmanager.adsmodule.callbacks.NativeCallbacks
+import com.hashim.hadmanager.adsmodule.callbacks.AdCallbacks
 import com.hashim.hadmanager.adsmodule.types.AdsType
 import com.hashim.hadmanager.adsmodule.types.WhatAd
 import timber.log.Timber
 
-class MainActivity : AppCompatActivity(), InterCallbacks, NativeCallbacks {
+class MainActivity : AppCompatActivity(), InterCallbacks, AdCallbacks {
     private lateinit var hMainBinding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,8 +34,6 @@ class MainActivity : AppCompatActivity(), InterCallbacks, NativeCallbacks {
         hMainBinding.hShowInter.setOnClickListener {
             AdManager.hShowInterstitial(this)
         }
-
-
     }
 
     override fun hOnAdFailedToLoad(hAdType: AdsType, hError: Error, hActivity: Activity?) {
@@ -74,7 +72,13 @@ class MainActivity : AppCompatActivity(), InterCallbacks, NativeCallbacks {
         Timber.d("hNativeAdvClosed And AdType is $hAdType  and What Add $hWhatAd")
     }
 
-    override fun hAdFailedToLoad(hAdType: AdsType, hWhatAd: WhatAd, hError: Error, hNativeView: ViewGroup) {
+    override fun hAdFailedToLoad(
+        hAdType: AdsType,
+        hWhatAd: WhatAd,
+        hError: Error,
+        hNativeView: ViewGroup,
+        hIsWithFallback: Boolean
+    ) {
         Timber.d("hNativeAdvFailedToLoad And AdType is $hAdType and error is $hError  and What Add $hWhatAd")
     }
 

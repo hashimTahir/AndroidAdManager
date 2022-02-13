@@ -9,7 +9,7 @@ import android.widget.TextView
 import com.facebook.ads.*
 import com.hashim.hadmanager.R
 import com.hashim.hadmanager.adsmodule.callbacks.InterCallbacks
-import com.hashim.hadmanager.adsmodule.callbacks.NativeCallbacks
+import com.hashim.hadmanager.adsmodule.callbacks.AdCallbacks
 import com.hashim.hadmanager.adsmodule.customadview.HnativeAdvancedView
 import com.hashim.hadmanager.adsmodule.customadview.HnativeBannerView
 import com.hashim.hadmanager.adsmodule.types.AdsType
@@ -27,7 +27,7 @@ class FaceBookAdManager(
     private var hFbBanner: AdView? = null
     private var nativeAd: NativeAd? = null
     private var hInterCallbacks: InterCallbacks? = null
-    private var hNativeCallbacks: NativeCallbacks? = null
+    private var hAdCallbacks: AdCallbacks? = null
 
 
     fun hGetFbInterstitialAd(): InterstitialAd? {
@@ -96,47 +96,49 @@ class FaceBookAdManager(
     }
 
     fun hShowBanner(
-        adContainerView: ViewGroup
+        hAdViewGroup: ViewGroup,
+        hIsWithFallback: Boolean = true
     ) {
         hIdsMap?.get(WhatAd.H_BANNER)?.let { bannerId ->
-            adContainerView.layoutParams.height = hGetBannerHeightInPixel()
-            hAddPlaceHolderTextView(adContainerView)
+            hAdViewGroup.layoutParams.height = hGetBannerHeightInPixel()
+            hAddPlaceHolderTextView(hAdViewGroup)
             object : AdListener {
                 override fun onError(ad: Ad?, adError: AdError?) {
                     adError?.errorMessage?.let {
-                        hNativeCallbacks?.hAdFailedToLoad(
+                        hAdCallbacks?.hAdFailedToLoad(
                             hAdType = AdsType.H_FACEBOOK,
+                            hWhatAd = WhatAd.H_BANNER,
                             hError = Error(
                                 hMessage = adError.errorMessage,
                                 hCode = adError.errorCode,
                             ),
-                            hNativeView = adContainerView,
-                            hWhatAd = WhatAd.H_BANNER
+                            hNativeView = hAdViewGroup,
+                            hIsWithFallback = hIsWithFallback
                         )
                     }
                 }
 
                 override fun onAdLoaded(ad: Ad?) {
-                    adContainerView.visibility = View.VISIBLE
-                    hNativeCallbacks?.hAdLoaded(
+                    hAdViewGroup.visibility = View.VISIBLE
+                    hAdCallbacks?.hAdLoaded(
                         hAdType = AdsType.H_FACEBOOK,
                         hWhatAd = WhatAd.H_BANNER
                     )
                     if (hFbBanner?.parent != null) {
                         (hFbBanner?.parent as ViewGroup).removeView(hFbBanner)
                     }
-                    adContainerView.addView(hFbBanner)
+                    hAdViewGroup.addView(hFbBanner)
                 }
 
                 override fun onAdClicked(ad: Ad?) {
-                    hNativeCallbacks?.hAdClicked(
+                    hAdCallbacks?.hAdClicked(
                         hAdType = AdsType.H_FACEBOOK,
                         hWhatAd = WhatAd.H_BANNER
                     )
                 }
 
                 override fun onLoggingImpression(ad: Ad?) {
-                    hNativeCallbacks?.hAdImpression(
+                    hAdCallbacks?.hAdImpression(
                         hAdType = AdsType.H_FACEBOOK,
                         hWhatAd = WhatAd.H_BANNER
                     )
@@ -222,50 +224,52 @@ class FaceBookAdManager(
 
     @SuppressLint("ClickableViewAccessibility")
     fun hShowNativeAdvanced(
-        hnativeAdvancedView: HnativeAdvancedView,
+        hNativeAdvancedView: HnativeAdvancedView,
+        hIsWithFallback: Boolean = true
     ) {
         hIdsMap?.get(WhatAd.H_NATIVE_ADVANCED)?.let { nativeAdvancedId ->
             val nativeAdListener: NativeAdListener = object : NativeAdListener {
                 override fun onMediaDownloaded(ad: Ad?) {}
                 override fun onError(ad: Ad?, adError: AdError) {
-                    hnativeAdvancedView.hShowHideAdLoader(true)
+                    hNativeAdvancedView.hShowHideAdLoader(true)
 
-                    hNativeCallbacks?.hAdFailedToLoad(
+                    hAdCallbacks?.hAdFailedToLoad(
                         hAdType = AdsType.H_FACEBOOK,
+                        hWhatAd = WhatAd.H_NATIVE_ADVANCED,
                         hError = Error(
                             hMessage = adError.errorMessage,
                             hCode = adError.errorCode,
                         ),
-                        hNativeView = hnativeAdvancedView,
-                        hWhatAd = WhatAd.H_NATIVE_ADVANCED
+                        hNativeView = hNativeAdvancedView,
+                        hIsWithFallback = hIsWithFallback
                     )
                 }
 
                 override fun onAdLoaded(ad: Ad?) {
-                    hNativeCallbacks?.hAdLoaded(
+                    hAdCallbacks?.hAdLoaded(
                         hAdType = AdsType.H_FACEBOOK,
                         hWhatAd = WhatAd.H_NATIVE_ADVANCED
                     )
                     if (nativeAd != null) {
                         hInflateFbNativeAdvanced(
                             nativeAd,
-                            hnativeAdvancedView.context
+                            hNativeAdvancedView.context
                         ).let { nativeAdLayout ->
-                            hnativeAdvancedView.hShowAdView(viewGroup = nativeAdLayout)
+                            hNativeAdvancedView.hShowAdView(viewGroup = nativeAdLayout)
                         }
                     }
                 }
 
 
                 override fun onAdClicked(ad: Ad?) {
-                    hNativeCallbacks?.hAdClicked(
+                    hAdCallbacks?.hAdClicked(
                         hAdType = AdsType.H_FACEBOOK,
                         hWhatAd = WhatAd.H_NATIVE_ADVANCED
                     )
                 }
 
                 override fun onLoggingImpression(ad: Ad?) {
-                    hNativeCallbacks?.hAdImpression(
+                    hAdCallbacks?.hAdImpression(
                         hAdType = AdsType.H_FACEBOOK,
                         hWhatAd = WhatAd.H_NATIVE_ADVANCED
                     )
@@ -285,6 +289,7 @@ class FaceBookAdManager(
 
     fun hShowNativeBanner(
         hNativeBannerView: HnativeBannerView,
+        hIsWithFallback: Boolean = true
     ) {
         hIdsMap?.get(WhatAd.H_NATIVE_BANNER)?.let { nativeBannerId ->
 
@@ -292,19 +297,20 @@ class FaceBookAdManager(
                 override fun onMediaDownloaded(ad: Ad?) {}
                 override fun onError(ad: Ad?, adError: AdError) {
                     hNativeBannerView.hShowHideAdLoader(true)
-                    hNativeCallbacks?.hAdFailedToLoad(
+                    hAdCallbacks?.hAdFailedToLoad(
                         hAdType = AdsType.H_FACEBOOK,
+                        hWhatAd = WhatAd.H_NATIVE_BANNER,
                         hError = Error(
                             hMessage = adError.errorMessage,
                             hCode = adError.errorCode,
                         ),
                         hNativeView = hNativeBannerView,
-                        hWhatAd = WhatAd.H_NATIVE_BANNER
+                        hIsWithFallback = hIsWithFallback
                     )
                 }
 
                 override fun onAdLoaded(ad: Ad?) {
-                    hNativeCallbacks?.hAdLoaded(
+                    hAdCallbacks?.hAdLoaded(
                         hAdType = AdsType.H_FACEBOOK,
                         hWhatAd = WhatAd.H_NATIVE_BANNER
                     )
@@ -321,14 +327,14 @@ class FaceBookAdManager(
                 }
 
                 override fun onAdClicked(ad: Ad?) {
-                    hNativeCallbacks?.hAdClicked(
+                    hAdCallbacks?.hAdClicked(
                         hAdType = AdsType.H_FACEBOOK,
                         hWhatAd = WhatAd.H_NATIVE_BANNER
                     )
                 }
 
                 override fun onLoggingImpression(ad: Ad?) {
-                    hNativeCallbacks?.hAdImpression(
+                    hAdCallbacks?.hAdImpression(
                         hAdType = AdsType.H_FACEBOOK,
                         hWhatAd = WhatAd.H_NATIVE_BANNER
                     )
@@ -389,8 +395,8 @@ class FaceBookAdManager(
         hInterCallbacks = interCallbacks
     }
 
-    fun hSetNativeCallbacks(nativeCallbacks: NativeCallbacks) {
-        hNativeCallbacks = nativeCallbacks
+    fun hSetNativeCallbacks(adCallbacks: AdCallbacks) {
+        hAdCallbacks = adCallbacks
     }
 
 }
