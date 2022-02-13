@@ -18,12 +18,8 @@ android {
         getByName("release") {
             isMinifyEnabled = true
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
-        }
 
-        getByName("debug") {
-            proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
-
-            resValue("string", "AdMob_AppId", "ca-app-pub-3940256099942544~3347511713")
+            resValue("string", "AdMob_AppId", "Your App Id")
             resValue ("string", "Admob_BannerId", "/6499/example/banner")
             resValue ("string", "Admob_NativeAdvancedId", "/6499/example/native")
             resValue( "string", "Admob_InterstitialId", "/6499/example/interstitial")
@@ -34,10 +30,30 @@ android {
             resValue( "string", "Mopup_Native_BannerId", "11a17b188668469fb0412708c3d16813")
 
 
-            resValue ("string", "Fb_InterstitialId", "262820941929301_262821001929295")
-            resValue ("string", "Fb_NativeAdvancedId", "262820941929301_262820981929297")
-            resValue ("string", "Fb_Native_BannerId", "262820941929301_262821005262628")
-            resValue ("string", "Fb_BannerId", "262820941929301_262820988595963")
+            resValue ("string", "Fb_InterstitialId", "Your Inter Id")
+            resValue ("string", "Fb_NativeAdvancedId", "Your Native Id")
+            resValue ("string", "Fb_Native_BannerId", "Your Native Id")
+            resValue ("string", "Fb_BannerId", "Your Banner Id")
+        }
+
+        getByName("debug") {
+            proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
+
+            resValue("string", "AdMob_AppId", "Your App Id")
+            resValue ("string", "Admob_BannerId", "/6499/example/banner")
+            resValue ("string", "Admob_NativeAdvancedId", "/6499/example/native")
+            resValue( "string", "Admob_InterstitialId", "/6499/example/interstitial")
+
+
+            resValue( "string", "Mopub_BannerId", "b195f8dd8ded45fe847ad89ed1d016da")
+            resValue ("string", "Mopub_InterstitialId", "24534e1901884e398f1253216226017e")
+            resValue( "string", "Mopup_Native_BannerId", "11a17b188668469fb0412708c3d16813")
+
+
+            resValue ("string", "Fb_InterstitialId", "Your Inter Id")
+            resValue ("string", "Fb_NativeAdvancedId", "Your Native Id")
+            resValue ("string", "Fb_Native_BannerId", "Your Native Id")
+            resValue ("string", "Fb_BannerId", "Your Banner Id")
         }
     }
     viewBinding.isEnabled = true

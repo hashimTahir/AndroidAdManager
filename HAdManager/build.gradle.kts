@@ -60,13 +60,13 @@ afterEvaluate {
                 from(components["debug"])
                 artifactId = "HAdManager"
                 groupId = "com.github.hashimTahir"
-                version = "1.2"
+                version = "1.3"
             }
             create<MavenPublication>("release") {
                 from(components["release"])
                 artifactId = "HAdManager"
                 groupId = "com.github.hashimTahir"
-                version = "1.2"
+                version = "1.3"
             }
         }
     }

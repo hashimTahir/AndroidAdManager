@@ -117,6 +117,43 @@ and override the methods.
       AdManager.hSetInterCallbacks(this)
       AdManager.hSetNativeCallbacks(this)
 
+Callbacks for these adevents are available in "AdCallbacks" and "InterCallbacks"
+interfaces.
+
+    fun hAdLoaded(
+    hAdType: AdsType,
+    hWhatAd: WhatAd,
+    )
+    
+    fun hAdClicked(
+        hAdType: AdsType,
+        hWhatAd: WhatAd
+    )
+
+    fun hAdImpression(
+        hAdType: AdsType,
+        hWhatAd: WhatAd
+    )
+
+    fun hAdClosed(
+        hAdType: AdsType,
+        hWhatAd: WhatAd
+    )
+
+    fun hAdFailedToLoad(
+        hAdType: AdsType,
+        hWhatAd: WhatAd,
+        hError: Error,
+        hNativeView: ViewGroup,
+        hIsWithFallback: Boolean
+    )
+
+    fun hNativeAdOpened(
+        hAdType: AdsType,
+        hWhatAd: WhatAd
+    )
+
+
 
 If you don't want to fallback to others Ads and only use fixed Ads then use the following
 
