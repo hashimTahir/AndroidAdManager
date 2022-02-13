@@ -98,7 +98,6 @@ class HnativeAdvancedView(
                 }
             }
             else -> {
-                Timber.d("Right here $hLoaderContainer")
                 return ConstraintLayout(context).apply {
                     layoutParams = LayoutParams(
                         LayoutParams.MATCH_PARENT,
