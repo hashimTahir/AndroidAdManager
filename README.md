@@ -23,7 +23,7 @@ Add it in your root build.gradle at the end of repositories:
 Step 2. Add the dependency
 
 	dependencies {
-	        implementation 'com.github.hashimTahir:AndroidAdManager:1.2'
+	        implementation 'com.github.hashimTahir:AndroidAdManager:1.3'
 	}
 
 Step 3. Add the (Required) debug and release ids in the project level gradle file like so:
