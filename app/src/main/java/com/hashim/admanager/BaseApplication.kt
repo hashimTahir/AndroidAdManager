@@ -45,7 +45,7 @@ class BaseApplication : Application() {
         AdManager.hSetNativeAdvancedPriority(AdPriorityType.H_MOP_UP)
         AdManager.hSetNativeBannerPriority(AdPriorityType.H_MOP_UP)
         AdManager.hSetInterstitialPriority(AdPriorityType.H_MOP_UP)
-        AdManager.hSetBannerPriority(AdPriorityType.H_MOP_UP)
+        AdManager.hSetBannerPriority(AdPriorityType.H_AD_MOB)
 
     }
 

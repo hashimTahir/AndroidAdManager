@@ -31,7 +31,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:text="Show InterAd"
-        app:layout_constraintTop_toBottomOf="@+id/hNativeBanner" />
+        app:layout_constraintBottom_toTopOf="@id/hBannerContainer" />
 
     <FrameLayout
         android:id="@+id/hBannerContainer"

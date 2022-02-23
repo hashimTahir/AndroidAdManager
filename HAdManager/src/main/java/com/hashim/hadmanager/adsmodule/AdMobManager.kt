@@ -274,7 +274,6 @@ class AdMobManager(
 
     private fun hAddPlaceHolderTextView(adContainerView: ViewGroup?) {
         val valueTV = TextView(hContext)
-        valueTV.setText(R.string.ad_loading)
         valueTV.layoutParams = LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT,
             LinearLayout.LayoutParams.MATCH_PARENT
