@@ -12,8 +12,8 @@ import android.widget.TextView
 import com.facebook.ads.AudienceNetworkAds
 import com.hashim.hadmanager.BuildConfig
 import com.hashim.hadmanager.R
-import com.hashim.hadmanager.adsmodule.callbacks.InterCallbacks
 import com.hashim.hadmanager.adsmodule.callbacks.AdCallbacks
+import com.hashim.hadmanager.adsmodule.callbacks.InterCallbacks
 import com.hashim.hadmanager.adsmodule.customadview.HnativeAdvancedView
 import com.hashim.hadmanager.adsmodule.customadview.HnativeBannerView
 import com.hashim.hadmanager.adsmodule.types.AdsType
@@ -344,7 +344,7 @@ class MopUpManager(
         }
     }
 
-    fun hSetInterCallbacks(interCallbacks: AdManager) {
+    fun hSetInterCallbacks(interCallbacks: InterCallbacks) {
         hInterCallbacks = interCallbacks
     }
 

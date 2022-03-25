@@ -6,40 +6,46 @@ import com.hashim.hadmanager.adsmodule.types.AdsType
 import com.hashim.hadmanager.adsmodule.types.WhatAd
 
 
-interface AdCallbacks {
+abstract class AdCallbacks {
 
-    fun hAdLoaded(
+    open fun hAdLoaded(
         hAdType: AdsType,
         hWhatAd: WhatAd,
-    )
+    ) {
+    }
 
-    fun hAdClicked(
+    open fun hAdClicked(
         hAdType: AdsType,
         hWhatAd: WhatAd
-    )
+    ) {
+    }
 
-    fun hAdImpression(
+    open fun hAdImpression(
         hAdType: AdsType,
         hWhatAd: WhatAd
-    )
+    ) {
+    }
 
-    fun hAdClosed(
+    open fun hAdClosed(
         hAdType: AdsType,
         hWhatAd: WhatAd
-    )
+    ) {
+    }
 
-    fun hAdFailedToLoad(
+    open fun hAdFailedToLoad(
         hAdType: AdsType,
         hWhatAd: WhatAd,
         hError: Error,
         hNativeView: ViewGroup,
         hIsWithFallback: Boolean
-    )
+    ) {
+    }
 
-    fun hNativeAdOpened(
+    open fun hNativeAdOpened(
         hAdType: AdsType,
         hWhatAd: WhatAd
-    )
+    ) {
+    }
 
 }
 

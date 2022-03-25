@@ -15,8 +15,9 @@ import com.hashim.hadmanager.adsmodule.types.AdPriorityType.*
 import com.hashim.hadmanager.adsmodule.types.AdsType
 import com.hashim.hadmanager.adsmodule.types.AdsType.*
 import com.hashim.hadmanager.adsmodule.types.WhatAd
+import timber.log.Timber
 
-object AdManager : InterCallbacks, AdCallbacks {
+object AdManager {
 
     private var hMopUpManager: MopUpManager? = null
     private var hFacebookManger: FaceBookAdManager? = null
@@ -27,9 +28,11 @@ object AdManager : InterCallbacks, AdCallbacks {
     private var hNativeBannerPriorityType: AdPriorityType = H_AD_MOB
     private var hNativeAdvancedPriorityType: AdPriorityType = H_AD_MOB
     private var hInterstitialPriorityType: AdPriorityType = H_AD_MOB
+    private var hTimeOut: Long = Constants.h3SecTimeOut
 
-    private var hInterCallbacks: InterCallbacks? = null
-    private var hAdCallbacks: AdCallbacks? = null
+    private var hAdManagerInterCallbacks: InterCallbacks? = null
+    private var hAdManagerAdCallbacks: AdCallbacks? = null
+
 
     fun hInitializeAds(
         hContext: Context,
@@ -43,8 +46,8 @@ object AdManager : InterCallbacks, AdCallbacks {
                         hContext,
                         hIdsMap[adsType]
                     ).also {
-                        it.hSetInterCallbacks(this)
-                        it.hSetNativeCallbacks(this)
+                        it.hSetInterCallbacks(hInterCallbacks)
+                        it.hSetNativeCallbacks(hAdCallbacks)
                     }
                 }
                 H_MOPUP -> {
@@ -52,8 +55,8 @@ object AdManager : InterCallbacks, AdCallbacks {
                         hContext,
                         hIdsMap[adsType]
                     ).also {
-                        it.hSetInterCallbacks(this)
-                        it.hSetNativeCallbacks(this)
+                        it.hSetInterCallbacks(hInterCallbacks)
+                        it.hSetNativeCallbacks(hAdCallbacks)
                     }
 
                 }
@@ -62,8 +65,8 @@ object AdManager : InterCallbacks, AdCallbacks {
                         hContext,
                         hIdsMap[adsType],
                     ).also {
-                        it.hSetInterCallbacks(this)
-                        it.hSetNativeCallbacks(this)
+                        it.hSetInterCallbacks(hInterCallbacks)
+                        it.hSetNativeCallbacks(hAdCallbacks)
                     }
                 }
             }
@@ -71,11 +74,11 @@ object AdManager : InterCallbacks, AdCallbacks {
     }
 
     fun hSetInterCallbacks(interCallbacks: InterCallbacks) {
-        hInterCallbacks = interCallbacks
+        hAdManagerInterCallbacks = interCallbacks
     }
 
     fun hSetNativeCallbacks(adCallbacks: AdCallbacks) {
-        hAdCallbacks = adCallbacks
+        hAdManagerAdCallbacks = adCallbacks
     }
 
 
@@ -84,7 +87,7 @@ object AdManager : InterCallbacks, AdCallbacks {
         hPriorityType: AdPriorityType = hInterstitialPriorityType
     ) {
         when (hPriorityType) {
-            H_AD_MOB -> hAdMobManager?.hLoadInterstitialAd()
+            H_AD_MOB -> hAdMobManager?.hLoadInterstitialAd(hTimeOut)
             H_MOP_UP -> hMopUpManager?.loadInterstitialAd(hActivity)
             H_FACE_BOOK -> hFacebookManger?.hLoadFbInterstitial()
             H_NONE -> Unit
@@ -368,126 +371,132 @@ object AdManager : InterCallbacks, AdCallbacks {
         hBannerPriorityType = bannerPriorityType
     }
 
-
-    /*---------------------InterCallBacks ------------------------*/
-    override fun hOnAdFailedToLoad(hAdType: AdsType, hError: Error, hActivity: Activity?) {
-        hInterCallbacks?.hOnAdFailedToLoad(hAdType, hError)
-        hActivity?.let {
-            hLoadInterstitial(
-                hPriorityType = hGetInterFallBackPriority(hAdType),
-                hActivity = it
-            )
-        }
+    fun hSetTimeout(timeOut: Long) {
+        hTimeOut = timeOut
     }
 
-    override fun hOnAddLoaded(hAdType: AdsType) {
-        hInterCallbacks?.hOnAddLoaded(hAdType)
-    }
 
-    override fun hOnAdFailedToShowFullContent(hAdType: AdsType, hError: Error) {
-        hInterCallbacks?.hOnAdFailedToShowFullContent(hAdType, hError)
-    }
+    private var hInterCallbacks: InterCallbacks = object : InterCallbacks() {
 
-    override fun hOnAddShowed(hAdType: AdsType) {
-        hInterCallbacks?.hOnAddShowed(hAdType)
-    }
-
-    override fun hOnAddDismissed(hAdType: AdsType) {
-        hInterCallbacks?.hOnAddDismissed(hAdType)
-    }
-
-    /*-------------------End-InterCallBacks ------------------------*/
-
-
-
-    /*---------------------AddCallbacks ------------------------*/
-    override fun hAdLoaded(
-        hAdType: AdsType,
-        hWhatAd: WhatAd
-    ) {
-        hAdCallbacks?.hAdLoaded(
-            hAdType = hAdType,
-            hWhatAd = hWhatAd
-        )
-    }
-
-    override fun hAdClicked(
-        hAdType: AdsType,
-        hWhatAd: WhatAd
-    ) {
-        hAdCallbacks?.hAdClicked(
-            hAdType = hAdType,
-            hWhatAd = hWhatAd
-        )
-    }
-
-    override fun hAdImpression(
-        hAdType: AdsType,
-        hWhatAd: WhatAd
-    ) {
-        hAdCallbacks?.hAdImpression(
-            hAdType = hAdType,
-            hWhatAd = hWhatAd
-        )
-    }
-
-    override fun hAdClosed(
-        hAdType: AdsType,
-        hWhatAd: WhatAd
-    ) {
-        hAdCallbacks?.hAdClosed(
-            hAdType = hAdType,
-            hWhatAd = hWhatAd
-        )
-    }
-
-    override fun hAdFailedToLoad(
-        hAdType: AdsType,
-        hWhatAd: WhatAd,
-        hError: Error,
-        hNativeView: ViewGroup,
-        hIsWithFallback: Boolean
-    ) {
-        hAdCallbacks?.hAdFailedToLoad(
-            hAdType = hAdType,
-            hWhatAd = hWhatAd,
-            hError = hError,
-            hNativeView = hNativeView,
-            hIsWithFallback = hIsWithFallback,
-
-            )
-        when (hIsWithFallback) {
-            true -> when (hWhatAd) {
-                WhatAd.H_NATIVE_BANNER -> hShowNativeBanner(
-                    hHnativeBannerView = hNativeView as HnativeBannerView,
-                    hPriorityType = hGetFallBackPriorityForNativeBanner(hAdsType = hAdType)
+        override fun hOnAdFailedToLoad(hAdType: AdsType, hError: Error, hActivity: Activity?) {
+            hAdManagerInterCallbacks?.hOnAdFailedToLoad(hAdType, hError)
+            hActivity?.let {
+                hLoadInterstitial(
+                    hPriorityType = hGetInterFallBackPriority(hAdType),
+                    hActivity = it
                 )
-                WhatAd.H_NATIVE_ADVANCED -> hShowNativeAdvanced(
-                    hnativeAdvancedView = hNativeView as HnativeAdvancedView,
-                    hPriorityType = hGetFallbackPriorityForNativeAdvanced(hAdsType = hAdType)
-                )
-                WhatAd.H_BANNER -> hShowBanner(
-                    bannerAdContainer = hNativeView,
-                    hPriorityType = hGetFallbackPriorityForBanner(hAdsType = hAdType)
-                )
-                WhatAd.H_INTER -> Unit
             }
-            false -> Unit
         }
 
+        override fun hOnAddLoaded(hAdType: AdsType) {
+            hAdManagerInterCallbacks?.hOnAddLoaded(hAdType)
+        }
+
+        override fun hOnAdFailedToShowFullContent(hAdType: AdsType, hError: Error) {
+            hAdManagerInterCallbacks?.hOnAdFailedToShowFullContent(hAdType, hError)
+        }
+
+        override fun hOnAddShowed(hAdType: AdsType) {
+            hAdManagerInterCallbacks?.hOnAddShowed(hAdType)
+        }
+
+        override fun hOnAddDismissed(hAdType: AdsType) {
+            hAdManagerInterCallbacks?.hOnAddDismissed(hAdType)
+        }
+
+        override fun hOnAdTimedOut(hAdType: AdsType) {
+            hAdManagerInterCallbacks?.hOnAdTimedOut(hAdType)
+        }
     }
 
-    override fun hNativeAdOpened(
-        hAdType: AdsType,
-        hWhatAd: WhatAd
-    ) {
-        hAdCallbacks?.hNativeAdOpened(
-            hAdType = hAdType,
-            hWhatAd = hWhatAd
-        )
+    private var hAdCallbacks: AdCallbacks = object : AdCallbacks() {
+        override fun hAdLoaded(
+            hAdType: AdsType,
+            hWhatAd: WhatAd
+        ) {
+            hAdManagerAdCallbacks?.hAdLoaded(
+                hAdType = hAdType,
+                hWhatAd = hWhatAd
+            )
+        }
+
+        override fun hAdClicked(
+            hAdType: AdsType,
+            hWhatAd: WhatAd
+        ) {
+            hAdManagerAdCallbacks?.hAdClicked(
+                hAdType = hAdType,
+                hWhatAd = hWhatAd
+            )
+        }
+
+        override fun hAdImpression(
+            hAdType: AdsType,
+            hWhatAd: WhatAd
+        ) {
+            hAdManagerAdCallbacks?.hAdImpression(
+                hAdType = hAdType,
+                hWhatAd = hWhatAd
+            )
+        }
+
+        override fun hAdClosed(
+            hAdType: AdsType,
+            hWhatAd: WhatAd
+        ) {
+            hAdManagerAdCallbacks?.hAdClosed(
+                hAdType = hAdType,
+                hWhatAd = hWhatAd
+            )
+        }
+
+        override fun hAdFailedToLoad(
+            hAdType: AdsType,
+            hWhatAd: WhatAd,
+            hError: Error,
+            hNativeView: ViewGroup,
+            hIsWithFallback: Boolean
+        ) {
+            hAdManagerAdCallbacks?.hAdFailedToLoad(
+                hAdType = hAdType,
+                hWhatAd = hWhatAd,
+                hError = hError,
+                hNativeView = hNativeView,
+                hIsWithFallback = hIsWithFallback,
+
+                )
+            when (hIsWithFallback) {
+                true -> when (hWhatAd) {
+                    WhatAd.H_NATIVE_BANNER -> hShowNativeBanner(
+                        hHnativeBannerView = hNativeView as HnativeBannerView,
+                        hPriorityType = hGetFallBackPriorityForNativeBanner(hAdsType = hAdType)
+                    )
+                    WhatAd.H_NATIVE_ADVANCED -> hShowNativeAdvanced(
+                        hnativeAdvancedView = hNativeView as HnativeAdvancedView,
+                        hPriorityType = hGetFallbackPriorityForNativeAdvanced(hAdsType = hAdType)
+                    )
+                    WhatAd.H_BANNER -> hShowBanner(
+                        bannerAdContainer = hNativeView,
+                        hPriorityType = hGetFallbackPriorityForBanner(hAdsType = hAdType)
+                    )
+                    WhatAd.H_INTER -> Unit
+                }
+                false -> Unit
+            }
+
+        }
+
+        override fun hNativeAdOpened(
+            hAdType: AdsType,
+            hWhatAd: WhatAd
+        ) {
+            hAdManagerAdCallbacks?.hNativeAdOpened(
+                hAdType = hAdType,
+                hWhatAd = hWhatAd
+            )
+        }
     }
 
-    /*-------------------End-NativeCallbacks ------------------------*/
 }
 
 

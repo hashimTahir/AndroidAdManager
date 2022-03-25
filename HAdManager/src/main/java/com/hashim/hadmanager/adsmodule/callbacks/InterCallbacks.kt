@@ -4,28 +4,40 @@ import android.app.Activity
 import com.hashim.hadmanager.adsmodule.Error
 import com.hashim.hadmanager.adsmodule.types.AdsType
 
-interface InterCallbacks {
+abstract class InterCallbacks {
 
-    fun hOnAdFailedToLoad(
+    open fun hOnAdFailedToLoad(
         hAdType: AdsType,
         hError: Error,
         hActivity: Activity? = null
-    )
+    ) {
 
-    fun hOnAddLoaded(
+    }
+
+    open fun hOnAddLoaded(
         hAdType: AdsType
-    )
+    ) {
+    }
 
-    fun hOnAdFailedToShowFullContent(
+    open fun hOnAdFailedToShowFullContent(
         hAdType: AdsType,
         hError: Error
-    )
+    ) {
+    }
 
-    fun hOnAddShowed(
+    open fun hOnAddShowed(
         hAdType: AdsType
-    )
+    ) {
+    }
 
-    fun hOnAddDismissed(
+    open fun hOnAddDismissed(
         hAdType: AdsType
-    )
+    ) {
+    }
+
+    open fun hOnAdTimedOut(
+        hAdType: AdsType
+    ) {
+
+    }
 }

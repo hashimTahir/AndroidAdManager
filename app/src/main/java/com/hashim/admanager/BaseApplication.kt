@@ -2,6 +2,7 @@ package com.hashim.admanager
 
 import android.app.Application
 import com.hashim.hadmanager.adsmodule.AdManager
+import com.hashim.hadmanager.adsmodule.Constants
 import com.hashim.hadmanager.adsmodule.types.AdPriorityType
 import com.hashim.hadmanager.adsmodule.types.AdsType
 import com.hashim.hadmanager.adsmodule.types.WhatAd
@@ -42,10 +43,12 @@ class BaseApplication : Application() {
             this,
             hIdsMap
         )
-        AdManager.hSetNativeAdvancedPriority(AdPriorityType.H_MOP_UP)
-        AdManager.hSetNativeBannerPriority(AdPriorityType.H_MOP_UP)
-        AdManager.hSetInterstitialPriority(AdPriorityType.H_MOP_UP)
+        AdManager.hSetNativeAdvancedPriority(AdPriorityType.H_AD_MOB)
+        AdManager.hSetNativeBannerPriority(AdPriorityType.H_AD_MOB)
+        AdManager.hSetInterstitialPriority(AdPriorityType.H_AD_MOB)
         AdManager.hSetBannerPriority(AdPriorityType.H_AD_MOB)
+        AdManager.hSetTimeout(Constants.h3SecTimeOut)
+
 
     }
 

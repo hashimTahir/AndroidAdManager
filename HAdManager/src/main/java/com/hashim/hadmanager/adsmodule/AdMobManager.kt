@@ -11,7 +11,6 @@ import com.google.android.gms.ads.*
 import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import com.google.android.gms.ads.nativead.NativeAd
-import com.hashim.hadmanager.R
 import com.hashim.hadmanager.adsmodule.callbacks.AdCallbacks
 import com.hashim.hadmanager.adsmodule.callbacks.InterCallbacks
 import com.hashim.hadmanager.adsmodule.customadview.HnativeAdvancedView
@@ -21,6 +20,10 @@ import com.hashim.hadmanager.adsmodule.types.WhatAd
 import com.hashim.hadmanager.databinding.AdmobNativeAdvancedLayoutBinding
 import com.hashim.hadmanager.databinding.AdmobNativeBannerLayoutBinding
 import com.hashim.hadmanager.templates.NativeTemplateStyle
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 
@@ -35,59 +38,74 @@ class AdMobManager(
     private var hAdCallbacks: AdCallbacks? = null
 
 
-    fun hLoadInterstitialAd() {
+    fun hLoadInterstitialAd(
+        hTimeOut: Long = Constants.h3SecTimeOut
+    ) {
         hIdsMap?.get(WhatAd.H_INTER)?.let { interId ->
             val adRequest = AdRequest.Builder().build()
 
-            InterstitialAd.load(
-                hContext!!,
-                interId,
-                adRequest,
-                object : InterstitialAdLoadCallback() {
-                    override fun onAdLoaded(interstitialAd: InterstitialAd) {
-                        this@AdMobManager.hInterstitialAd = interstitialAd
-                        interstitialAd.fullScreenContentCallback = hFullScreenContentCallback
-                        hInterCallbacks?.hOnAddLoaded(hAdType = AdsType.H_ADMOB)
-                    }
+            CoroutineScope(Dispatchers.Main).launch {
+                var hCallBackCalled = false
+                InterstitialAd.load(
+                    hContext!!,
+                    interId,
+                    adRequest,
+                    object : InterstitialAdLoadCallback() {
+                        override fun onAdLoaded(interstitialAd: InterstitialAd) {
 
-                    override fun onAdFailedToLoad(loadAdError: LoadAdError) {
-                        hInterCallbacks?.hOnAdFailedToLoad(
-                            hAdType = AdsType.H_ADMOB,
-                            hError = Error(
-                                hMessage = loadAdError.message,
-                                hCode = loadAdError.code,
-                                hDomain = loadAdError.domain,
+                            this@AdMobManager.hInterstitialAd = interstitialAd
+
+                            interstitialAd.fullScreenContentCallback = object : FullScreenContentCallback() {
+                                override fun onAdDismissedFullScreenContent() {
+                                    hInterCallbacks?.hOnAddDismissed(AdsType.H_ADMOB)
+                                    hCallBackCalled = true
+                                }
+
+                                override fun onAdFailedToShowFullScreenContent(adError: AdError) {
+
+                                    hInterCallbacks?.hOnAdFailedToShowFullContent(
+                                        hAdType = AdsType.H_ADMOB,
+                                        hError = Error(
+                                            hMessage = adError.message,
+                                            hCode = adError.code,
+                                            hDomain = adError.domain,
+                                        )
+                                    )
+                                    hCallBackCalled = true
+                                }
+
+                                override fun onAdShowedFullScreenContent() {
+                                    hInterCallbacks?.hOnAddShowed(AdsType.H_ADMOB)
+                                    hCallBackCalled = true
+                                    hInterstitialAd = null
+                                }
+                            }
+                            hInterCallbacks?.hOnAddLoaded(hAdType = AdsType.H_ADMOB)
+                            hCallBackCalled = true
+                        }
+
+                        override fun onAdFailedToLoad(loadAdError: LoadAdError) {
+                            hInterCallbacks?.hOnAdFailedToLoad(
+                                hAdType = AdsType.H_ADMOB,
+                                hError = Error(
+                                    hMessage = loadAdError.message,
+                                    hCode = loadAdError.code,
+                                    hDomain = loadAdError.domain,
+                                )
                             )
-                        )
+                            hCallBackCalled = true
+                        }
                     }
+                )
 
-                })
+                delay(hTimeOut)
+
+                if (hCallBackCalled.not()) {
+                    hInterCallbacks?.hOnAdTimedOut(AdsType.H_ADMOB)
+                }
+            }
         }
     }
-
-    var hFullScreenContentCallback: FullScreenContentCallback =
-        object : FullScreenContentCallback() {
-            override fun onAdDismissedFullScreenContent() {
-                hInterCallbacks?.hOnAddDismissed(AdsType.H_ADMOB)
-            }
-
-            override fun onAdFailedToShowFullScreenContent(adError: AdError) {
-
-                hInterCallbacks?.hOnAdFailedToShowFullContent(
-                    hAdType = AdsType.H_ADMOB,
-                    hError = Error(
-                        hMessage = adError.message,
-                        hCode = adError.code,
-                        hDomain = adError.domain,
-                    )
-                )
-            }
-
-            override fun onAdShowedFullScreenContent() {
-                hInterCallbacks?.hOnAddShowed(AdsType.H_ADMOB)
-                hInterstitialAd = null
-            }
-        }
 
 
     fun hShowNativeBanner(

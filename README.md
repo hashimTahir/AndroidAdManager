@@ -23,7 +23,7 @@ Add it in your root build.gradle at the end of repositories:
 Step 2. Add the dependency
 
 	dependencies {
-	        implementation 'com.github.hashimTahir:AndroidAdManager:1.3'
+	        implementation 'com.github.hashimTahir:AndroidAdManager:1.5'
 	}
 
 Step 3. Add the (Required) debug and release ids in the project level gradle file like so:
@@ -114,11 +114,11 @@ Step 7. Call the relevant methods from Ui to display Ads.
 Step 8. To set the Ads Callback use the following methods in your calling activity,
 and override the methods.
 
-      AdManager.hSetInterCallbacks(this)
-      AdManager.hSetNativeCallbacks(this)
+       AdManager.hSetInterCallbacks(hInterCallbacks)
+        AdManager.hSetNativeCallbacks(hNativeCallbacks)
 
 Callbacks for these adevents are available in "AdCallbacks" and "InterCallbacks"
-interfaces.
+Abstract classes.
 
     fun hAdLoaded(
     hAdType: AdsType,
@@ -153,6 +153,20 @@ interfaces.
         hWhatAd: WhatAd
     )
 
+    open fun hOnAdTimedOut(
+    hAdType: AdsType
+    ) {
+
+    }
+
+
+
+Step 9. Default timeout is 3 seconds. To Change the timeout use the method.
+
+        AdManager.hSetTimeout(Constants.h3SecTimeOut)
+
+if for some reason the ad fails to even make request and gets stuck,
+ fun hOnAdTimedOut will get called after the given time.
 
 
 If you don't want to fallback to others Ads and only use fixed Ads then use the following
