@@ -43,7 +43,7 @@ dependencies {
     implementation("com.facebook.shimmer:shimmer:0.5.0@aar")
     implementation("com.jakewharton.timber:timber:5.0.1")
     implementation("com.google.android.gms:play-services-ads:20.6.0")
-    implementation("com.facebook.android:audience-network-sdk:6.8.0")
+    implementation("com.facebook.android:audience-network-sdk:6.10.0")
     implementation("com.google.ads.mediation:facebook:6.10.0.0")
     implementation("com.mopub.mediation:facebookaudiencenetwork:6.5.1.0")
     implementation("com.applovin:applovin-sdk:11.1.2")
@@ -63,13 +63,13 @@ afterEvaluate {
                 from(components["debug"])
                 artifactId = "HAdManager"
                 groupId = "com.github.hashimTahir"
-                version = "1.5"
+                version = "1.6"
             }
             create<MavenPublication>("release") {
                 from(components["release"])
                 artifactId = "HAdManager"
                 groupId = "com.github.hashimTahir"
-                version = "1.5"
+                version = "1.6"
             }
         }
     }

@@ -39,7 +39,7 @@ android {
         getByName("debug") {
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
 
-            resValue("string", "AdMob_AppId", "ca-app-pub-3940256099942544~3347511713")
+            resValue("string", "AdMob_AppId", "Your App Id")
             resValue ("string", "Admob_BannerId", "/6499/example/banner")
             resValue ("string", "Admob_NativeAdvancedId", "/6499/example/native")
             resValue( "string", "Admob_InterstitialId", "/6499/example/interstitial")
