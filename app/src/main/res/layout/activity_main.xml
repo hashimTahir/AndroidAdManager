@@ -10,7 +10,7 @@
         android:id="@+id/hNativeAdvancedBanner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:hLoaderContainer="@layout/native_advanced_alternative"
+        app:hShowShimmer="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -20,6 +20,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
+        app:hShowShimmer="false"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/hNativeAdvancedBanner" />
 
@@ -28,10 +29,10 @@
         android:id="@+id/hShowInter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         android:text="Show InterAd"
-        app:layout_constraintBottom_toTopOf="@id/hBannerContainer" />
+        app:layout_constraintBottom_toTopOf="@id/hBannerContainer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <FrameLayout
         android:id="@+id/hBannerContainer"

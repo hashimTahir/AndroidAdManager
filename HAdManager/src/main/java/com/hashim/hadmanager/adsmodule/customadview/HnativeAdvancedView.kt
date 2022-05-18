@@ -10,8 +10,8 @@ import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import com.facebook.shimmer.ShimmerFrameLayout
-import com.hashim.hadmanager.adsmodule.hDp
 import com.hashim.hadmanager.R
+import com.hashim.hadmanager.adsmodule.hDp
 import com.hashim.hadmanager.databinding.HnativeAdvancedLayoutBinding
 import timber.log.Timber
 
@@ -20,7 +20,7 @@ class HnativeAdvancedView(
     attrs: AttributeSet?
 ) : ConstraintLayout(context, attrs) {
 
-    private val H_SHOW_SHIMMER = -1234
+    private val H_SHIMMER_CONTAINER = -1234
 
     private var hLayoutHAdcontainerBinding = HnativeAdvancedLayoutBinding.inflate(
         LayoutInflater.from(context),
@@ -81,31 +81,49 @@ class HnativeAdvancedView(
 
     private fun hFindLoaderView(typedArray: TypedArray): View {
 
-        val hLoaderContainer = typedArray.getResourceId(
+        val hShowAlternativeLoader = typedArray.getResourceId(
             R.styleable.hHAdContainerClStyleable_hLoaderContainer,
-            H_SHOW_SHIMMER
+            H_SHIMMER_CONTAINER
         )
-        when (hLoaderContainer) {
-            H_SHOW_SHIMMER -> {
-                return ShimmerFrameLayout(context).apply {
-                    layoutParams = LayoutParams(
-                        LayoutParams.MATCH_PARENT,
-                        hDp(context, 270).toInt()
-                    )
-                    LayoutInflater.from(this.context).also {
-                        it.inflate(R.layout.shimmer_native_advanced_layout, this)
+        val hShowShimmer = typedArray.getBoolean(
+            R.styleable.hHAdContainerClStyleable_hShowShimmer,
+            false
+        )
+        return when (hShowAlternativeLoader) {
+            H_SHIMMER_CONTAINER -> {
+                when (hShowShimmer) {
+                    true -> {
+                        ShimmerFrameLayout(context).apply {
+                            layoutParams = LayoutParams(
+                                LayoutParams.MATCH_PARENT,
+                                hDp(context, 270).toInt()
+                            )
+                            LayoutInflater.from(this.context).also {
+                                it.inflate(R.layout.shimmer_native_advanced_layout, this)
+                            }
+                        }
+                    }
+                    false -> {
+                        return ConstraintLayout(context).apply {
+                            layoutParams = LayoutParams(
+                                LayoutParams.MATCH_PARENT,
+                                hDp(context, 270).toInt()
+                            )
+                            setPadding(4, 4, 4, 4)
+                        }
                     }
                 }
+
             }
             else -> {
-                return ConstraintLayout(context).apply {
+                ConstraintLayout(context).apply {
                     layoutParams = LayoutParams(
                         LayoutParams.MATCH_PARENT,
                         hDp(context, 270).toInt()
                     )
                     setPadding(4, 4, 4, 4)
                     LayoutInflater.from(this.context).also {
-                        it.inflate(hLoaderContainer, this)
+                        it.inflate(hShowAlternativeLoader, this)
                     }
                 }
             }
