@@ -39,7 +39,7 @@ android {
         getByName("debug") {
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
 
-            resValue("string", "AdMob_AppId", "Your App Id")
+            resValue("string", "AdMob_AppId", "ca-app-pub-3940256099942544~3347511713")
             resValue ("string", "Admob_BannerId", "/6499/example/banner")
             resValue ("string", "Admob_NativeAdvancedId", "/6499/example/native")
             resValue( "string", "Admob_InterstitialId", "/6499/example/interstitial")
@@ -66,6 +66,6 @@ dependencies {
     implementation("com.jakewharton.timber:timber:5.0.1")
     implementation("androidx.core:core-ktx:1.7.0")
     implementation("androidx.appcompat:appcompat:1.4.1")
-    implementation("com.google.android.material:material:1.5.0")
+    implementation("com.google.android.material:material:1.6.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.3")
 }
