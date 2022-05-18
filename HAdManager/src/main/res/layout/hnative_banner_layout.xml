@@ -8,19 +8,18 @@
     android:layout_height="wrap_content"
     android:layout_margin="6dp">
 
-    <com.facebook.shimmer.ShimmerFrameLayout
-        android:id="@+id/hShimmerLoader"
+    <LinearLayout
+        android:id="@+id/hLoaderContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <include layout="@layout/shimmer_native_banner_layout" />
-
-    </com.facebook.shimmer.ShimmerFrameLayout>
+    </LinearLayout>
 
 
     <androidx.constraintlayout.widget.ConstraintLayout

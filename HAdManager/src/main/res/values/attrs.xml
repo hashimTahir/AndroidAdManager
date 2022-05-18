@@ -9,5 +9,6 @@
     <attr name="hStrokeWidth" format="integer"/>
     <attr name="hStrokeColor" format="reference"/>
     <attr name="hLoaderContainer" format="reference"/>
+    <attr name="hShowShimmer" format="boolean"/>
   </declare-styleable>
 </resources>

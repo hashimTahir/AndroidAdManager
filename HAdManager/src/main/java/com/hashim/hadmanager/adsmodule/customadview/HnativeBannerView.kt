@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import com.facebook.shimmer.ShimmerFrameLayout
 import com.hashim.hadmanager.R
 import com.hashim.hadmanager.adsmodule.hDp
 import com.hashim.hadmanager.databinding.HnativeBannerLayoutBinding
@@ -32,7 +33,6 @@ class HnativeBannerView(
             attrs,
             R.styleable.hHAdContainerClStyleable, 0, 0
         )
-        hLayoutHAdcontainerBinding.hShimmerLoader
         hSetBackGroundDrawable(hTypedArray)
     }
 
@@ -67,35 +67,75 @@ class HnativeBannerView(
                     hWidth = hStrokeWidth,
                 )
             )
+
+            hLayoutHAdcontainerBinding.hLoaderContainer.also {
+                it.removeAllViews()
+                it.addView(hFindLoaderView(this@apply))
+            }
+        }
+    }
+
+    private fun hFindLoaderView(typedArray: TypedArray): View {
+
+        val hShowShimmer = typedArray.getBoolean(
+            R.styleable.hHAdContainerClStyleable_hShowShimmer,
+            false
+        )
+        when (hShowShimmer) {
+            true -> {
+                return ShimmerFrameLayout(context).apply {
+                    layoutParams = LayoutParams(
+                        LayoutParams.MATCH_PARENT,
+                        hDp(context, 90).toInt()
+                    )
+                    LayoutInflater.from(this.context).also {
+                        it.inflate(R.layout.shimmer_native_banner_layout, this)
+                    }
+                }
+            }
+            false -> {
+                return ConstraintLayout(context).apply {
+                    layoutParams = LayoutParams(
+                        LayoutParams.MATCH_PARENT,
+                        hDp(context, 90).toInt()
+                    )
+                    setPadding(4, 4, 4, 4)
+                }
+            }
         }
 
     }
 
+
     fun hShowHideAdLoader(hShowLoader: Boolean) {
-        when (hShowLoader) {
-            true -> {
-                hLayoutHAdcontainerBinding.hShimmerLoader.visibility = View.VISIBLE
-                hLayoutHAdcontainerBinding.hAdContainer.visibility = View.GONE
-            }
-            false -> {
-                hLayoutHAdcontainerBinding.hShimmerLoader.visibility = View.GONE
-                hLayoutHAdcontainerBinding.hAdContainer.visibility = View.VISIBLE
+        hLayoutHAdcontainerBinding.apply {
+            when (hShowLoader) {
+                true -> {
+                    hLoaderContainer.visibility = View.VISIBLE
+                    hAdContainer.visibility = View.GONE
+                }
+                false -> {
+                    hLoaderContainer.visibility = View.GONE
+                    hAdContainer.visibility = View.VISIBLE
+                }
             }
         }
-
     }
 
     fun hShowHideAdView(hShowAdView: Boolean) {
-        when (hShowAdView) {
-            true -> {
-                hLayoutHAdcontainerBinding.hAdContainer.visibility = View.VISIBLE
-                hLayoutHAdcontainerBinding.hShimmerLoader.visibility = View.GONE
-            }
-            false -> {
-                hLayoutHAdcontainerBinding.hAdContainer.visibility = View.GONE
-                hLayoutHAdcontainerBinding.hShimmerLoader.visibility = View.VISIBLE
+        hLayoutHAdcontainerBinding.apply {
+            when (hShowAdView) {
+                true -> {
+                    hAdContainer.visibility = View.VISIBLE
+                    hLoaderContainer.visibility = View.GONE
+                }
+                false -> {
+                    hAdContainer.visibility = View.GONE
+                    hLoaderContainer.visibility = View.VISIBLE
+                }
             }
         }
+
     }
 
     fun hSetBackGroundDrawable(
